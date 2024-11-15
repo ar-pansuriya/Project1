@@ -33,7 +33,6 @@ const StewardshipParent = () => {
         });
 
         const mkidData = await getAPI("/getDataDistinctMKID");
-        console.log("mkidData====", mkidData);
 
         const mkIds = mkidData.map((item) => item.MK_ID);
         console.log("mkIds", mkIds);
