@@ -3,6 +3,7 @@ import DataStewardshipDataLeft from "./StewardshipLeft";
 import DataStewardshipDataRight from "./StewardshipRight";
 import { Loader2Icon } from "lucide-react";
 import axios from "axios";
+import { getAPI } from "@/Functions/apiFunction";
 
 // API endpoint and headers
 const API_URL = "https://api-ds.markaazdata.com";
@@ -30,6 +31,9 @@ const StewardshipParent = () => {
             "x-api-key": API_KEY,
           },
         });
+
+        const mkidData = await getAPI("/getDataDistinctMKID");
+        console.log("mkidData====", mkidData);
 
         // Validate if response data is in the expected format
         if (!response.data || !Array.isArray(response.data)) {
@@ -71,7 +75,11 @@ const StewardshipParent = () => {
           const phone = primaryData[`${prefix}PHONE`] || "";
 
           // Extract match data fields
-          const matchAddress = matchData.ADDRESS1 || matchData.ADDRESS2 || matchData.ADDRESS3 || "";
+          const matchAddress =
+            matchData.ADDRESS1 ||
+            matchData.ADDRESS2 ||
+            matchData.ADDRESS3 ||
+            "";
           const matchCompanyName = matchData.NAME || "";
 
           // Return the formatted data object
@@ -130,7 +138,9 @@ const StewardshipParent = () => {
       return;
     }
     const { id, matchId } = data;
-    const selectedItem = stewardshipData.find((item) => item.matchId === matchId);
+    const selectedItem = stewardshipData.find(
+      (item) => item.matchId === matchId
+    );
     setSelectedData(selectedItem); // Set the selected item based on matchId
   };
 
