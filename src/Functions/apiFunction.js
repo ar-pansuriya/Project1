@@ -9,7 +9,6 @@ const axiosInstance = axios.create({
   timeout: 5000, // Request timeout in milliseconds
   headers: {
     'Content-Type': 'application/json',
-    "x-api-key":`Bearer ${apiKey}`
   },
 });
 
@@ -18,7 +17,7 @@ axiosInstance.interceptors.request.use(
     (config) => {
       if (apiKey) {
         config.headers['x-api-key'] = apiKey; // Add the API key
-        console.log('Request Headers:', config.headers); // Debug the headers
+        // console.log('Request Headers:', config.headers); // Debug the headers
       }
       return config;
     },
@@ -28,9 +27,14 @@ axiosInstance.interceptors.request.use(
   );
 
 // GET function
-export const getAPI = async (path) => {
+export const getAPI = async (path, optionalKey = null) => {
   try {
-    const response = await axiosInstance.get(path);
+    // Add headers dynamically
+    const config = {};
+    if (optionalKey) {
+      config.headers = { primary_mkid: optionalKey };
+    }
+    const response = await axiosInstance.get(path, config);
     return response.data;
   } catch (error) {
     handleAPIError(error);

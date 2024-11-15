@@ -35,6 +35,20 @@ const StewardshipParent = () => {
         const mkidData = await getAPI("/getDataDistinctMKID");
         console.log("mkidData====", mkidData);
 
+        const mkIds = mkidData.map((item) => item.MK_ID);
+        console.log("mkIds", mkIds);
+
+        if (mkidData) {
+          for (const mkId of mkIds) {
+            try {
+              const response = await getAPI("/lockRecord", mkId);
+              console.log("API Response Lock Data:", response);
+            } catch (error) {
+              console.error("Error with API request:", error);
+            }
+          }
+        }
+
         // Validate if response data is in the expected format
         if (!response.data || !Array.isArray(response.data)) {
           throw new Error("Unexpected data format received");
