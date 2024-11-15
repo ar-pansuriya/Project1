@@ -7,7 +7,7 @@ const apiKey = "4uFqMLILOj26lMArLOilW9rfEFCUYfHe2MzmfjJY";
 // Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: baseApiUrl, 
-  timeout: 5000, // Request timeout in milliseconds
+  // timeout: 5000, // Request timeout in milliseconds
   headers: {
     'Content-Type': 'application/json',
   },
