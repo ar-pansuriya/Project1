@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const baseApiUrl =  "https://api-ds.markaazdata.com"
-const apiKey = "7ewZZL2Lg28cONdzCJmax26f0aBjhoReBBcV5Yig";
+// const apiKey = "7ewZZL2Lg28cONdzCJmax26f0aBjhoReBBcV5Yig";
+const apiKey = "4uFqMLILOj26lMArLOilW9rfEFCUYfHe2MzmfjJY";
 
 // Create an Axios instance
 const axiosInstance = axios.create({

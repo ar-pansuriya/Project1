@@ -7,7 +7,7 @@ import { getAPI } from "@/Functions/apiFunction";
 
 // API endpoint and headers
 const API_URL = "https://api-ds.markaazdata.com";
-const API_KEY = "7ewZZL2Lg28cONdzCJmax26f0aBjhoReBBcV5Yig";
+const API_KEY = "4uFqMLILOj26lMArLOilW9rfEFCUYfHe2MzmfjJY";
 const COUNT_RECORDS_API_KEY = "4uFqMLILOj26lMArLOilW9rfEFCUYfHe2MzmfjJY";
 
 const StewardshipParent = () => {
