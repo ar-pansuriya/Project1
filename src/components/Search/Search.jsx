@@ -18,6 +18,7 @@ const Search = () => {
   const [subRegions, setSubRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedSubRegion, setSelectedSubRegion] = useState(null);
+  const [selectedProvider, setSelectedProvider] = useState('');
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
 
@@ -28,8 +29,8 @@ const Search = () => {
 
   const fetchWorldRegions = async () => {
     try {
-      const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
-      setWorldRegions(distinct_world_regions);
+      // const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
+      // setWorldRegions(distinct_world_regions);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
@@ -37,8 +38,8 @@ const Search = () => {
 
   const fetchSubRegions = async (SelectedRegion) => {
     try {
-      const { distinct_world_sub_regions } = await getAPI(`/distinctWorldSubRegions?region_selected=${SelectedRegion}`);
-      setSubRegions(distinct_world_sub_regions.slice(0, 10)); // Assuming the response is an array
+      // const { distinct_world_sub_regions } = await getAPI(`/distinctWorldSubRegions?region_selected=${SelectedRegion}`);
+      // setSubRegions(distinct_world_sub_regions.slice(0, 10));
     } catch (error) {
       console.error("Error fetching sub-regions:", error);
     }
@@ -62,8 +63,13 @@ const Search = () => {
     }
   }
 
-  const handleSearch = () => {
-
+  const handleSearch = async() => {
+    try {
+      // const response = await getAPI(`/filteredDataDistinctMKID?data_providers=${provider1}&world_region=${region1}&world_sub_region=${subregion1}&company=${exampleCompany}&city=${exampleCity}`);
+      // setWorldRegions(response);
+    } catch (error) {
+      console.error("Error fetching world regions:", error);
+    }
   }
 
   return (
