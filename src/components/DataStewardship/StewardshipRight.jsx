@@ -64,21 +64,21 @@ const StewardshipRight = ({ selectedData = {}, setOnNextPre }) => {
       <div className="flex h-full gap-4 overflow-hidden">
 
         {/* Left Section: Field Values */}
-        <div className="w-[45%] flex flex-col gap-2 h-full bg-white rounded-2xl p-2 overflow-y-auto">
+        <div className="w-[50%] flex flex-col gap-2 h-full bg-white rounded-2xl p-2 overflow-y-auto">
           <div className="flex items-center w-full text-xs font-medium px-3">
             <h2 className="w-[40%]">Field</h2>
             <h2 className="w-[60%]">Value</h2>
           </div>
           {/* Map through field values and display them */}
           {Object.entries(selectedData.PRIMARY_MKID_DATA).map(([key, value]) => (
-            <div key={key} style={{ marginBottom: "10px" }}>
+            <div key={key} style={{ marginBottom: "6px" }} className="text-[14px]">
               <strong>{key}:</strong> {value}
             </div>
           ))}
         </div>
 
         {/* Right Section: Company Details */}
-        <div className="w-[55%] h-full overflow-y-auto">
+        <div className="w-[50%] h-full overflow-y-auto">
           <div className="bg-white rounded-2xl w-full p-2 flex flex-col gap-2 overflow-y-auto">
             <div className="w-full flex items-center text-xs font-medium px-3 text-[#25245F]">
               <h2 className="w-[40%]">Field</h2>
@@ -88,7 +88,7 @@ const StewardshipRight = ({ selectedData = {}, setOnNextPre }) => {
             {/* Map through company details and display them */}
             {Object.entries(selectedData.MATCH_SOURCE_DATA).map(([key, value]) => (
               key !== 'fullAddress' &&
-              <div key={key} style={{ marginBottom: "10px" }}>
+              <div key={key} style={{ marginBottom: "6px" }} className="text-[14px]">
                 <strong>{key}:</strong> {value}
               </div>
             ))}

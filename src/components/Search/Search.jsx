@@ -12,12 +12,12 @@ import {
 import { Button } from "../ui/button";
 import { getAPI } from "@/Functions/apiFunction";
 
-const Search = () => {
-  const [worldProvider, setWorlProvider] = useState(['EFX', 'EFX-2', 'EFX-3']);
+const Search = ({ setSearchData }) => {
+  const [worldProvider, setWorlProvider] = useState(['EFX', 'CS', 'OC']);
   const [worldRegions, setWorldRegions] = useState([]);
   const [subRegions, setSubRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [selectedSubRegion, setSelectedSubRegion] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedSubRegion, setSelectedSubRegion] = useState('');
   const [selectedProvider, setSelectedProvider] = useState('');
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
@@ -63,10 +63,31 @@ const Search = () => {
     }
   }
 
-  const handleSearch = async() => {
+  const handleSearch = async () => {
     try {
-      // const response = await getAPI(`/filteredDataDistinctMKID?data_providers=${provider1}&world_region=${region1}&world_sub_region=${subregion1}&company=${exampleCompany}&city=${exampleCity}`);
-      // setWorldRegions(response);
+      // const response = await getAPI(`/filteredDataDistinctMKID?data_providers=${selectedProvider}&world_region=${selectedRegion}&world_sub_region=${selectedSubRegion}&company=${company}&city=${city}`);
+      // setSearchData(response);
+      setSelectedProvider('');
+      setSelectedSubRegion("");
+      setSelectedRegion('');
+    } catch (error) {
+      console.error("Error fetching world regions:", error);
+    }
+  }
+
+  const handleSaveChanges = async() => {
+    try {
+
+      const { MATCH_MKID, PRIMARY_MKID, isMatched } = JSON.parse(localStorage.getItem('recently'));
+      console.log(MATCH_MKID, PRIMARY_MKID, isMatched, '-------2222');
+
+
+      if (isMatched) {
+        // const response = await getAPI(`/matchRecord`,PRIMARY_MKID,MATCH_MKID);
+      } else {
+        // const response = await getAPI(`/notMatchRecord`,PRIMARY_MKID,MATCH_MKID);
+      }
+      // const response = await getAPI(`/unlockRecord`,PRIMARY_MKID,MATCH_MKID);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
@@ -82,7 +103,7 @@ const Search = () => {
             <Button className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full">
               <div className="flex items-center gap-2 text-xs">
                 <IoGitNetworkOutline className="text-[#0A78CD]" />
-                Data Provider
+                {selectedProvider ? selectedProvider : "Data Provider"}
               </div>
               <IoChevronDown />
             </Button>
@@ -90,7 +111,7 @@ const Search = () => {
           <DropdownMenuContent className="w-56">
             <DropdownMenuGroup>
               {worldProvider.map((provider, i) => (
-                <DropdownMenuItem key={i} >
+                <DropdownMenuItem key={i} onClick={() => setSelectedProvider(provider)}>
                   {provider}
                 </DropdownMenuItem>
               ))}
@@ -168,7 +189,7 @@ const Search = () => {
         <button onClick={() => handleSearch()} className="bg-[#0A78CD] box-shadow py-3 px-5 text-white text-xs font-semibold rounded-full">
           Search
         </button>
-        <button className="text-[#0A78CD] border border-[#0A78CD] text-nowrap text-xs py-3 px-5 font-semibold rounded-full">
+        <button onClick={() => handleSaveChanges()} className="text-[#0A78CD] border border-[#0A78CD] text-nowrap text-xs py-3 px-5 font-semibold rounded-full">
           Save Changes
         </button>
       </div>

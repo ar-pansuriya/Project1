@@ -5,7 +5,6 @@ import {
   IoRemoveOutline,
 } from "react-icons/io5";
 import { SlLocationPin } from "react-icons/sl";
-import { LuPhone } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import ExpandedItemsButton from "../Buttons/ExpandedItemsButton";
 import { getAPI } from "@/Functions/apiFunction";
@@ -16,6 +15,7 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
   const [selectedId, setSelectedId] = useState(null);
   const [displayedCount, setDisplayedCount] = useState(10);
   const [getDataMKID, setGetDataMKID] = useState([]);
+  const [paginationData, setPaginatedData] = useState([]);
 
   const data = [
     {
@@ -175,6 +175,7 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
   const toggleExpand = async (uniqueKey, item) => {
     console.log(item, '=***********')
     try {
+      // const response = await getAPI(`/getDataMKID`, item.MK_ID);
       const newdata = data.map((v) => {
         const MATCH_SOURCE_DATA = JSON.parse(v.MATCH_SOURCE_DATA);
         const PRIMARY_MKID_DATA = JSON.parse(v.PRIMARY_MKID_DATA);
@@ -182,8 +183,6 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
         MATCH_SOURCE_DATA.fullAddress = v.MATCH_MKID_SRC === 'CS'
           ? `${MATCH_SOURCE_DATA.NAME}\n${MATCH_SOURCE_DATA.ADDRESS1} ${MATCH_SOURCE_DATA.ADDRESS2}\n${MATCH_SOURCE_DATA.ADDRESS3}\n${MATCH_SOURCE_DATA.ZIP}\n${MATCH_SOURCE_DATA.COUNTRY}`
           : `${MATCH_SOURCE_DATA.EFX_ADDRESS}\n${MATCH_SOURCE_DATA.EFX_CITY}\n${MATCH_SOURCE_DATA.EFX_ZIPCODE}\n${MATCH_SOURCE_DATA.EFX_CTRYNAME}`;
-
-        console.log(MATCH_SOURCE_DATA.fullAddress, '---------------');
 
         return { ...v, MATCH_SOURCE_DATA, PRIMARY_MKID_DATA };
       });
@@ -197,6 +196,7 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
       return isCollapsing ? null : uniqueKey;
     });
   };
+
 
   useEffect(() => {
 
@@ -251,134 +251,230 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
     };
   }, []);
 
+  /* --------------------------- pagination logic --------------------------- */
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(stewardshipData.length / recordsPerPage);
+
+  // Paginated data calculation
+
+  useEffect(() => {
+    const currentRecords = stewardshipData.slice(
+      (currentPage - 1) * recordsPerPage,
+      currentPage * recordsPerPage
+    );
+    setPaginatedData(currentRecords);
+  }, [currentPage, stewardshipData]);
+
+  // Handlers for page navigation
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Dynamically generate page numbers
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5; // How many page numbers to display at once
+    let startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 1);
+    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+    // Adjust the range to ensure the page numbers are within limits
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+    }
+
+    // Generate page numbers array
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
+  };
+
+  // Get the range of records being displayed
+  const getRecordRange = () => {
+    const startRecord = (currentPage - 1) * recordsPerPage + 1;
+    const endRecord = Math.min(currentPage * recordsPerPage, stewardshipData.length);
+    return `${startRecord}-${endRecord}`;
+  };
+
   return (
-    <div className="bg-[#F9FAFB] rounded-3xl h-[79%] w-[42%] py-4 pb-3 px-4 overflow-y-auto scroll-container">
+    <div className="bg-[#F9FAFB] h-[80%] rounded-3xl w-[45%] py-4 pb-6 px-4">
 
       {/* Header section displaying the column titles */}
-      <div className="flex items-center gap-7 text-sm">
-        <div className="w-1/2 flex items-center">
-          <p className="w-1/2 text-center pl-4">Markaaz ID</p>
-          <p className="w-1/2 text-right">Source Record ID</p>
-        </div>
-        <div className="w-1/2 flex items-center">
-          <p className="w-1/2 text-left">Company</p>
-          <p className="w-1/2 text-left">Matches</p>
-        </div>
-        <div>
-          <p className="text-xs">Total Records: {totalRecords}</p>
+      <div className="flex items-center justify-between text-[14px]">
+        <p className="text-center pl-4">Markaaz ID</p>
+        <p className="text-right">Source Record ID</p>
+        <p className="text-left">Company</p>
+        <p className="text-left">Matches</p>
+        <div className="flex flex-col items-center">
+          <p className="text-xs">Total Records</p>
+          <strong>{totalRecords}</strong>
         </div>
       </div>
 
+
       {/* Map through the stewardship data to display each record */}
-      {stewardshipData.slice(0, displayedCount).map((item, index) => {
+      <div className="h-[90%] overflow-y-auto">
+        {paginationData?.length > 0 ? (
+          paginationData.slice(0, displayedCount).map((item, index) => {
+            const uniqueKey = `${item.MK_ID}-${index}`;
 
+            return (
+              <div key={uniqueKey} className="bg-white rounded-2xl p-3 my-2">
+                {/* Display record details */}
 
-        const uniqueKey = `${item.MK_ID}-${index}`;
+                <div className="text-[#66668F] flex text-[14px] justify-between items-center">
+                  <div className="">
+                    {/* Toggle expand icon */}
+                    {expandedId === uniqueKey ? (
+                      <IoRemoveOutline
+                        onClick={() => toggleExpand(uniqueKey, item)}
+                        className="bg-[#e6f1fa] text-[#0A78CD] rounded-full shrink-0 p-1 text-3xl cursor-pointer"
+                      />
+                    ) : (
+                      <IoAddOutline
+                        onClick={() => toggleExpand(uniqueKey, item)}
+                        className="bg-[#e6f1fa] text-[#0A78CD] rounded-full shrink-0 p-1 text-3xl cursor-pointer"
+                      />
+                    )}
 
-        return (
-          <div key={uniqueKey} className="bg-white rounded-2xl p-3 my-2">
-            {/* Display record details */}
-            <div className="text-[#66668F] flex text-xs justify-between px-1">
-              <div className="w-1/2 pr-3 pl-1 gap-2 flex justify-between">
-                {/* Toggle expand icon */}
-                {expandedId === uniqueKey ? (
-                  <IoRemoveOutline
-                    onClick={() => toggleExpand(uniqueKey, item)}
-                    className="bg-[#e6f1fa] text-[#0A78CD] rounded-full shrink-0 p-1 text-3xl cursor-pointer"
-                  />
-                ) : (
-                  <IoAddOutline
-                    onClick={() => toggleExpand(uniqueKey, item)}
-                    className="bg-[#e6f1fa] text-[#0A78CD] rounded-full shrink-0 p-1 text-3xl cursor-pointer"
-                  />
-                )}
-                <div className="flex w-full font-light gap-5 justify-between">
-                  <div className="w-1/2">
-                    <p>{item.MK_ID}</p>
-                    <p>{item.SOURCE}</p>
                   </div>
-                  <p className="w-1/2 text-left">{item.SOURCE}</p>
-                </div>
-              </div>
-              <div className="w-1/2 pr-3 pl-1 gap-2 flex justify-between">
-                <div className="flex w-full font-light gap-5 justify-between">
-                  <div className="w-1/2 flex flex-col gap-2">
+                  <p>{item.MK_ID}</p>
+                  <p>{item.SOURCE}</p>
+                  <div className="flex flex-col gap-2 w-40 items-center justify-center">
                     <p>{item.COMPANY_NAME}</p>
-                    <div className="flex gap-1">
+                    <div className="flex max-w-40 items-center text-wrap gap-1">
                       <SlLocationPin className="shrink-0 text-base text-[#0A78CD] font-semibold" />
                       {item.FULL_ADDRESS}
                     </div>
                   </div>
-                  <div className="w-1/2 text-left h-full flex flex-col pb-3 justify-between">
-                    <p>Matches 1 Of {item.MATCH_COUNT}</p>
+                  <div className="text-left h-full flex flex-col gap-4 justify-between">
+                    <p>Matches 1 ({item.MATCH_COUNT})</p>
                     <button className="rounded-full w-fit py-2 px-4 bg-[#0A78CD] box-shadow text-white font-medium">
                       Reject
                     </button>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Expanded view section */}
-            {expandedId === uniqueKey && getDataMKID.map((item) => (
-              <div className="bg-[#ECF5FB] rounded-xl mt-2 overflow-hidden">
-                <div className="bg-[#C8D3DB] p-3">
-                  <div className="flex items-center w-full justify-between px-2">
-                    <div className="w-1/2 flex items-center text-sm">
-                      <p className="w-1/2">Markaaz ID</p>
-                      <p className="w-1/2">Source Record ID</p>
-                    </div>
-                    <div className="w-1/2 flex items-center text-sm">
-                      <p className="w-1/2">Company</p>
-                      <p className="w-1/2">Match(%)</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Expanded item details */}
-                <div className="p-3 border-b border-[#66668F33]">
-                  <div className="flex w-full font-light text-[#66668F] justify-between px-2">
-                    <div className="w-1/2 flex text-xs">
-                      <div className="w-1/2">
-                        <p>{item.PRIMARY_MKID}</p>
-                        <p>{item.PRIMARY_MKID_SOURCE_ID}</p>
-                      </div>
-                      <p className="w-1/2">{item.MATCH_MKID_SOURCE_ID}</p>
-                    </div>
-                    <div className="w-1/2 flex text-xs">
-                      <div className="w-1/2 flex flex-col gap-2">
-                        <p>{item.MATCH_MKID_SRC === 'CS' ? item.MATCH_SOURCE_DATA.NAME : item.MATCH_SOURCE_DATA.EFX_AFFLULTNAMEALL}</p>
-                        <div className="flex gap-1">
-                          <SlLocationPin className="shrink-0 text-base text-[#0A78CD] font-semibold" />
-                          <p>{item.MATCH_SOURCE_DATA.fullAddress}</p>
+                {/* Expanded view section */}
+                {expandedId === uniqueKey && getDataMKID.map((subItem) => (
+                  <div className="bg-[#ECF5FB] rounded-xl mt-2 overflow-hidden">
+                    <div className="bg-[#C8D3DB] p-3">
+                      <div className="flex items-center w-full justify-between px-2">
+                        <div className="w-1/2 flex items-center text-sm">
+                          <p className="w-1/2">Markaaz ID</p>
+                          <p className="w-1/2">Source Record ID</p>
+                        </div>
+                        <div className="w-1/2 flex items-center text-sm">
+                          <p className="w-1/2">Company</p>
+                          <p className="w-1/2">Match(%)</p>
                         </div>
                       </div>
-                      <div className="w-1/2 flex flex-col justify-between gap-2 pb-4">
-                        <div className="flex w-full items-center justify-between pb-3">
-                          <p>{item.BOOSTED_SCORE}</p>
-                          {/* Select/Unselect Button */}
-                          {selectedId === item.MATCH_MKID ? (
-                            <IoChevronBackOutline
-                              onClick={() => handleSelectData(item.MATCH_MKID, item)}
-                              className="bg-[#0A78CD] text-white p-1 rounded-full shrink-0 text-3xl cursor-pointer"
-                            />
-                          ) : (
-                            <IoChevronForwardOutline
-                              onClick={() => handleSelectData(item.MATCH_MKID, item)}
-                              className="bg-[#f0f0f4] text-[#66668F] p-1 rounded-full shrink-0 text-3xl cursor-pointer"
-                            />
-                          )}
+                    </div>
+
+                    {/* Expanded item details */}
+                    <div className="p-3 border-b border-[#66668F33]">
+                      <div className="flex w-full font-light text-[#66668F] justify-between px-2">
+                        <div className="w-1/2 flex text-xs">
+                          <div className="w-1/2">
+                            <p>{subItem.PRIMARY_MKID}</p>
+                            <p>{subItem.PRIMARY_MKID_SOURCE_ID}</p>
+                          </div>
+                          <p className="w-1/2">{subItem.MATCH_MKID_SOURCE_ID}</p>
                         </div>
-                        <ExpandedItemsButton item={item}/>
+                        <div className="w-1/2 flex text-xs">
+                          <div className="w-1/2 flex flex-col gap-2">
+                            <p>{subItem.MATCH_MKID_SRC === 'CS' ? subItem.MATCH_SOURCE_DATA.NAME : subItem.MATCH_SOURCE_DATA.EFX_AFFLULTNAMEALL}</p>
+                            <div className="flex gap-1">
+                              <SlLocationPin className="shrink-0 text-base text-[#0A78CD] font-semibold" />
+                              <p>{subItem.MATCH_SOURCE_DATA.fullAddress}</p>
+                            </div>
+                          </div>
+                          <div className="w-1/2 flex flex-col justify-between gap-2 pb-4">
+                            <div className="flex w-full items-center justify-between pb-3">
+                              <p>{subItem.BOOSTED_SCORE}</p>
+                              {/* Select/Unselect Button */}
+                              {selectedId === subItem.MATCH_MKID ? (
+                                <IoChevronBackOutline
+                                  onClick={() => handleSelectData(subItem.MATCH_MKID, subItem)}
+                                  className="bg-[#0A78CD] text-white p-1 rounded-full shrink-0 text-3xl cursor-pointer"
+                                />
+                              ) : (
+                                <IoChevronForwardOutline
+                                  onClick={() => handleSelectData(subItem.MATCH_MKID, subItem)}
+                                  className="bg-[#f0f0f4] text-[#66668F] p-1 rounded-full shrink-0 text-3xl cursor-pointer"
+                                />
+                              )}
+                            </div>
+                            <ExpandedItemsButton item={subItem} />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        );
-      })}
+            );
+          })
+        ) : (
+          <p className="text-center text-[#66668F] text-sm">Data not found</p>
+        )}
+      </div>
+
+
+      <div className="flex items-center justify-between pt-2">
+        <p className="text-[12px] text-[#66668F]">
+          Showing {getRecordRange()} out of {stewardshipData.length} Records
+        </p>
+        <div className="flex items-center space-x-2">
+          {/* Previous Button */}
+          <button
+            onClick={() => handlePrevious()}
+            className="px-3 py-1 rounded-full text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+
+          {/* Page Numbers */}
+          {generatePageNumbers().map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`w-8 h-8 flex items-center justify-center rounded-full ${page === currentPage
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-600 hover:bg-gray-200'
+                }`}
+            >
+              {page}
+            </button>
+          ))}
+          {/* Next Button */}
+          <button
+            onClick={() => handleNext()}
+            className="px-3 py-1 rounded-full text-gray-600 hover:text-blue-500 disabled:cursor-not-allowed"
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 };

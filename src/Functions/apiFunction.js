@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-const baseApiUrl =  "https://api-ds.markaazdata.com"
+const baseApiUrl = "https://api-ds.markaazdata.com"
 // const apiKey = "7ewZZL2Lg28cONdzCJmax26f0aBjhoReBBcV5Yig";
 const apiKey = "7ewZZL2Lg28cONdzCJmax26f0aBjhoReBBcV5Yig";
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-  baseURL: baseApiUrl, 
+  baseURL: baseApiUrl,
   // timeout: 5000, // Request timeout in milliseconds
   headers: {
     'Content-Type': 'application/json',
@@ -15,25 +15,31 @@ const axiosInstance = axios.create({
 
 // Add an API key dynamically for all requests
 axiosInstance.interceptors.request.use(
-    (config) => {
-      if (apiKey) {
-        config.headers['x-api-key'] = apiKey; // Add the API key
-        // console.log('Request Headers:', config.headers); // Debug the headers
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+  (config) => {
+    if (apiKey) {
+      config.headers['x-api-key'] = apiKey; // Add the API key
+      // console.log('Request Headers:', config.headers); // Debug the headers
     }
-  );
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // GET function
-export const getAPI = async (path, optionalKey = null) => {
+export const getAPI = async (path, p_mkid = null, m_mkid = null) => {
   try {
     // Add headers dynamically
     const config = {};
-    if (optionalKey) {
-      config.headers = { primary_mkid: optionalKey };
+    console.log(p_mkid,'11111111');
+    
+    if (p_mkid) {
+      console.log(p_mkid,'2222');
+      config.headers = { primary_mkid: p_mkid };
+    }
+    if (m_mkid) {
+      config.headers = { match_mkid: m_mkid };
     }
     const response = await axiosInstance.get(path, config);
     return response.data;
