@@ -30,17 +30,19 @@ axiosInstance.interceptors.request.use(
 // GET function
 export const getAPI = async (path, p_mkid = null, m_mkid = null) => {
   try {
-    // Add headers dynamically
-    const config = {};
-    console.log(p_mkid,'11111111');
-    
+    // Initialize the headers dynamically
+    const config = { headers: {} };
+
     if (p_mkid) {
-      console.log(p_mkid,'2222');
-      config.headers = { primary_mkid: p_mkid };
+      console.log(p_mkid, 'Primary MKID');
+      config.headers.primary_mkid = p_mkid;
     }
     if (m_mkid) {
-      config.headers = { match_mkid: m_mkid };
+      console.log(m_mkid, 'Match MKID');
+      config.headers.match_mkid = m_mkid;
     }
+
+    // Make the GET request with the dynamic headers
     const response = await axiosInstance.get(path, config);
     return response.data;
   } catch (error) {
