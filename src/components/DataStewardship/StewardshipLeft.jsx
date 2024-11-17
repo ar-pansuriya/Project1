@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import ExpandedItemsButton from "../Buttons/ExpandedItemsButton";
 import { getAPI } from "@/Functions/apiFunction";
 
-const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPre }) => {
+const StewardshipLeft = ({ stewardshipData, onSelectData, onNextPre }) => {
   // State hooks to manage expanded, selected items and the number of records to display
   const [expandedId, setExpandedId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
@@ -313,18 +313,14 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
   };
 
   return (
-    <div className="bg-[#F9FAFB] h-[80%] rounded-3xl w-[45%] py-4 pb-6 px-4">
-
+    <div className="bg-[#F9FAFB] h-[80%] rounded-[20px] w-[45%] py-4 pb-6 px-4">
       {/* Header section displaying the column titles */}
-      <div className="flex items-center justify-between text-[14px]">
-        <p className="text-center pl-4">Markaaz ID</p>
-        <p className="text-right">Source Record ID</p>
-        <p className="text-left">Company</p>
-        <p className="text-left">Matches</p>
-        <div className="flex flex-col items-center">
-          <p className="text-xs">Total Records</p>
-          <strong>{totalRecords}</strong>
-        </div>
+      <div className="flex px-20 items-center justify-between text-[14px]">
+        <p className="">Markaaz ID</p>
+        <p className="">Source Record ID</p>
+        <p className="">Company</p>
+        <p className="">Matches</p>
+       
       </div>
 
 
@@ -335,7 +331,7 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
             const uniqueKey = `${item.MK_ID}-${index}`;
 
             return (
-              <div key={uniqueKey} className="bg-white rounded-2xl p-3 my-2">
+              <div key={uniqueKey} className={`bg-white rounded-2xl p-3 my-2 ${expandedId === uniqueKey && 'border border-[#0A78CD]'}`}>
                 {/* Display record details */}
 
                 <div className="text-[#66668F] flex text-[14px] justify-between items-center">
@@ -384,11 +380,12 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, totalRecords, onNextPr
                           <p className="w-1/2">Company</p>
                           <p className="w-1/2">Match(%)</p>
                         </div>
+
                       </div>
                     </div>
 
                     {/* Expanded item details */}
-                    <div className="p-3 border-b border-[#66668F33]">
+                    <div className={`p-3  ${selectedId === subItem.MATCH_MKID ? 'border-2 rounded-b-xl border-[#0A78CD]' : 'border-b border-[#66668F33]'}`}>
                       <div className="flex w-full font-light text-[#66668F] justify-between px-2">
                         <div className="w-1/2 flex text-xs">
                           <div className="w-1/2">

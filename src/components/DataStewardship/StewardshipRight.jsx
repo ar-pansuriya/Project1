@@ -27,36 +27,39 @@ const StewardshipRight = ({ selectedData = {}, setOnNextPre }) => {
   return (
     <div className="bg-[#F9FAFB] text-[#25245F] flex flex-col rounded-3xl h-[79%] w-[58%] px-5 py-4">
       {/* Title Section */}
-      <h1 className="font-medium">Match Details</h1>
 
       {/* Match Header Section */}
       <div className="mt-1 mb-3 flex items-center justify-between">
-        <div className="text-sm">
+        <div className="flex flex-col">
+          <h1 className="font-medium mb-4">Match Details</h1>
           <p>Source Information</p>
-          <p className="text-xs text-[#66668F] font-light">Markaaz ID: {selectedData.PRIMARY_MKID}</p>
+          <p className="text-xs text-[#66668F] font-light">Markaaz ID: <strong className="font-semibold">{selectedData.PRIMARY_MKID}</strong></p>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center gap-3">
-          <div className="text-sm">
-            <ExpandedItemsButton item={selectedData}/>
+        <div className="flex flex-col justify-center gap-4 items-end">
+          <div className="flex items-center gap-3">
+            <div className="text-sm">
+              <ExpandedItemsButton item={selectedData} />
+            </div>
+            <button onClick={() => {
+              const randomNumber = Math.floor(100 + Math.random() * 900);
+              const prefixedValue = `Pre-${randomNumber}`;
+              setOnNextPre(prefixedValue);
+            }} className="text-[#0A78CD] font-medium flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-white text-sm border border-[#F2F4F5]">
+              <IoArrowBackOutline />
+              Prev
+            </button>
+            <button onClick={() => {
+              const randomNumber = Math.floor(100 + Math.random() * 900);
+              const prefixedValue = `Next-${randomNumber}`;
+              setOnNextPre(prefixedValue);
+            }} className="text-[#0A78CD] font-medium flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-white text-sm border border-[#F2F4F5]">
+              Next
+              <IoArrowForwardOutline />
+            </button>
           </div>
-          <button onClick={() => {
-            const randomNumber = Math.floor(100 + Math.random() * 900);
-            const prefixedValue = `Pre-${randomNumber}`;
-            setOnNextPre(prefixedValue);
-          }} className="text-[#0A78CD] font-medium flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-white text-sm border border-[#F2F4F5]">
-            <IoArrowBackOutline />
-            Prev
-          </button>
-          <button onClick={() => {
-            const randomNumber = Math.floor(100 + Math.random() * 900);
-            const prefixedValue = `Next-${randomNumber}`;
-            setOnNextPre(prefixedValue);
-          }} className="text-[#0A78CD] font-medium flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-white text-sm border border-[#F2F4F5]">
-            Next
-            <IoArrowForwardOutline />
-          </button>
+          <p className="text-xs text-[#66668F] font-light">Match ID: <strong className="font-semibold">{selectedData.MATCH_MKID}</strong></p>
         </div>
       </div>
 

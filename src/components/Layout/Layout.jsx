@@ -7,13 +7,14 @@ import { useState } from 'react';
 const Layout = () => {
   // Add a state to track whether the user is logged in
   const [searchData, setSearchData] = useState([]);
+  const [totalRecords,setTotalRecords]=useState();
 
 
   return (
     <div className="h-screen overflow-hidden relative">
       <Nav />
-      <Search setSearchData={setSearchData}/>
-      <DataStewardshipData searchData={searchData}/>
+      <Search totalRecords={totalRecords} setSearchData={setSearchData}/>
+      <DataStewardshipData setTotalRecords={setTotalRecords} searchData={searchData}/>
       <main>
         <Outlet />
       </main>

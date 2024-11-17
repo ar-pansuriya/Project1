@@ -12,7 +12,7 @@ import {
 import { Button } from "../ui/button";
 import { getAPI } from "@/Functions/apiFunction";
 
-const Search = ({ setSearchData }) => {
+const Search = ({ setSearchData, totalRecords }) => {
   const [worldProvider, setWorlProvider] = useState(['EFX', 'CS', 'OC']);
   const [worldRegions, setWorldRegions] = useState([]);
   const [subRegions, setSubRegions] = useState([]);
@@ -21,6 +21,1174 @@ const Search = ({ setSearchData }) => {
   const [selectedProvider, setSelectedProvider] = useState('');
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
+  const [subRegionLoading, setSubRegionLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const worldSubRegion = [
+    "WEST SUSSEX",
+    "X0",
+    "SIR GAERFYRDDIN",
+    "LONDON NW4",
+    "WALTHAM CROSS",
+    "AYRSHIRE",
+    "REDHILL",
+    "LISBURN AND CASTLEREAGH",
+    "EXETER - TORQUAY - PLYMOUTH",
+    "ORPINGTON",
+    "LONDON W13",
+    "NEWBRIDGE",
+    "OLDHAM, GREATER MANCHESTER",
+    "MARKFIELD",
+    "LONDON W6",
+    "BUCKINGHAM",
+    "DUNDEE",
+    "LONDON W1G",
+    "ARGYLL AND BUTE",
+    "CAMBS.",
+    "DUDLEY",
+    "SOUTHPORT",
+    "LOTHIANS",
+    "GALSTON",
+    "ESSEX, ",
+    "KILMARNOCK",
+    "EAST ANGLIA",
+    "ILKESTON",
+    "LONDON EC3R",
+    "COVENT GARDEN",
+    "UNITED KINDGOM",
+    "CALDICOT",
+    "NOTTINGHAMSHIRE ",
+    "CAMBRIDGESHIRE, .",
+    "ESSEX, .",
+    "WILTSHIRE SN5  6PB",
+    "SCUNTHORPE",
+    "HAMPSHIRE  ",
+    "ANDOVER",
+    "KINGUSSIE",
+    "WEST MIDS",
+    "CAYMAN ISLANDS",
+    "HENLEY-IN-ARDEN",
+    "PANGBOURNE READING",
+    "NORTHANTS ",
+    "PEMBROKESHIRE ",
+    "MOLD",
+    "WC2N 9JQ",
+    "UNTED KINGDOM",
+    "CANVEY ISLAND",
+    "BASINGSTOKE, HANTS",
+    "OLDBURY",
+    "PRESTON, LANCS",
+    "WC2B 5AH",
+    "BALLYMENA",
+    "HAMPSHIRE , ",
+    "GTR LONDON",
+    "WALLASEY",
+    "NORTH DOWN",
+    "FORT WILLIAM",
+    "PARK ROYAL",
+    "SOUTH GLOUCESTERSHIRE ",
+    "PONTYPRIDD",
+    "BS494BL",
+    "BRIDGENDBOROUGH",
+    "TROWBRIDGE",
+    "W. YORKSHIRE",
+    "WALTHAMSTOW",
+    "WEST LOTHIAN ",
+    "N43EG",
+    "WEST MIDLANDS B92 7NY",
+    "EAST SUSSSEX",
+    "PETERBOROUGH ",
+    "S.YORKSHIRE",
+    "LONDON.  ",
+    "SOUTH TYNESIDE",
+    "LINCONSHIRE",
+    "KEN",
+    "MIDDLESEX HR4 6TS",
+    "MIDLOTHIAN  ",
+    "INVERGARRY",
+    "MIDDEX",
+    "NORTH WALES ",
+    "NORFOLK  ",
+    "MIDDLESEX. ",
+    "SHETLAND  ZE1 0MA",
+    "CORNWALL  ",
+    "NW13 7DH",
+    "LA129JS",
+    "WORCESTER PARK",
+    "SWAFFHAM",
+    "MARKET RASEN",
+    "WC2H9JQ",
+    "LANCASHIRE PR1 0UT",
+    "BR2 )DN",
+    "GR. LONDON",
+    "NR PRESTON LANCS ",
+    "CLIFTON",
+    "MSY",
+    "WC1H 9BJ",
+    "MALEW",
+    "KENT ME4 4DB",
+    "EH7 6TS",
+    "STAAFORDSHIRE",
+    "MIDDLESEX    ",
+    "BD194HQ",
+    "ESSEX    ",
+    "OXFORDSHIRE OX41EP",
+    "UPON AVON WARWICKSHIRE",
+    "ESSEX. D. ",
+    "NR DONCASTER ",
+    "CHESIRE",
+    "WEST MIDLANDS B24BG",
+    "SURREY GU11UN",
+    "AVON  ",
+    "LONDO",
+    "LEICESTER. .",
+    "ESSEX.     ",
+    "HEATHROW AIRPORT",
+    "NR PRESTON",
+    "L3PLQ",
+    "NEWBURY, BERKSHIRE",
+    "OXFORD.   ",
+    "CARLISLE, CUMBRIA,  ",
+    "SURREY       ",
+    "HERTS HP 235",
+    "PE84BA",
+    "NEWQUAY CORNWALL ",
+    "DY3AW",
+    "EAST LOTHIAN, SCOTLAND",
+    "CHOOSE YOUR STATE (IF APPLICABLE)",
+    "\\\\BERKSHIRE",
+    "NORTHWEST",
+    "HA3 OQP",
+    "N.E.LINCOLNSHIRE",
+    "ST17 ODQ",
+    "DEWSBURY WEST YORKSHIRE",
+    "BRAMPTON",
+    "TRENT",
+    "SPINNINGFIELDS",
+    "BT44 OPU",
+    "SURREY GU24 OLY",
+    "ROMFORD. ESSEX.   ",
+    "TYNE + WEAR",
+    "BRK",
+    "FY8 5FT",
+    "KENT    DA157BY",
+    "CLACKMANNANSHIRE ",
+    "STOKE-ON-TRENT. .",
+    "WEST YORKSHIRE BS19 3QD",
+    "KENT       ",
+    "EGHAM SURREY",
+    "MERSEYSDIE ",
+    "BOW",
+    "MARKET TOWN",
+    "PLEASE CHOOSE...",
+    "NE61LA",
+    "WEST YORKSHIRE",
+    "SWANSEA",
+    "RENFREWSHIRE",
+    "KIRKCUDBRIGHTSHIRE",
+    "BRIDGEND",
+    "BILLERICAY",
+    "NEWCASTLE UPON TYNE",
+    "MALDON",
+    "BEDS",
+    "HONITON",
+    "ABERDEEN CITY",
+    "LONDON W1H",
+    "OXON",
+    "BRACKNELL FOREST",
+    "LONDON EC4V",
+    "PECKHAM",
+    "PORTH",
+    "BEXLEY",
+    "TAYSIDE",
+    "ABINGDON",
+    "LONDON WC2B",
+    "CARLISLE",
+    "CO. ANTRIM",
+    "PINNER",
+    "SELECT ONE",
+    "CHIPPING NORTON",
+    "COVENTRY, WEST MIDLANDS",
+    "SMETHWICK",
+    "WEST MALLING",
+    "ACCRINGTON",
+    "W.SUSSEX",
+    "BASINGSTOKE",
+    "NORTH ACTON",
+    "WINDSOR AND MAIDENHEAD",
+    "BNES",
+    "AVON ",
+    "DT1  1RX",
+    "WORKSOP",
+    "HENGOED",
+    "BRADFORD WEST YORKSHIRE",
+    "LONDON      ",
+    "COUNTY OF LONDON",
+    "CONWY ",
+    "HIGH PEAK",
+    "CCBC",
+    "CEREDIGION",
+    "HERTS  ",
+    "SALOP",
+    "ABERGAVENNY   GWENT ",
+    "KINGTON",
+    "FRINTON-ON-SEA",
+    "ENGLAND RH29NQ",
+    "WELWYN GARDEN CITY",
+    "BAGSHOT",
+    "BRADFORD, WEST YORKS",
+    "SKEGNESS",
+    "MEASHAM",
+    "AMSTERDAM-PURMEREND",
+    "EC1",
+    "DE212ND",
+    "OTLEY",
+    "BEXLEYHEATH",
+    "SAXMUNDHAM",
+    "HERTS.   ",
+    "WEST BYFLEET",
+    "YORKSHIRE  ",
+    "LEEDS. ",
+    "BEDFORD ",
+    "SA659QY",
+    "WREXHAM COUNTY BOROUGH",
+    "CO LONDONDERRY BT47 1AG",
+    "CW58EQ",
+    "FARNHAM SURREY",
+    "LIPHOOK",
+    "HAMPSHIRE SO140PH",
+    "WRL",
+    "BROMBOROUGH, WIRRAL",
+    "CHINGFORD",
+    "PE18 7HB",
+    "LIGHTWATER",
+    "EX",
+    "PARKGATE",
+    "SWANLEY KENT ",
+    "ABERDEENSHIRE AB338RA",
+    "SEFTON",
+    "ISL",
+    "- NON U.S. -",
+    "HEREFORD & WORCESTER",
+    "SURREY - ",
+    "?GREATER MANCHESTER",
+    "TYNE AND WEAR,",
+    "ESSEX CO3 5UL",
+    "GU1  3UY",
+    "OYDON  SURREY CR0 4XD",
+    "CASTLETOWN",
+    "STROOD KENT",
+    "MIDDLESEX HA3 OXY",
+    "NORTHHUMBERLAND",
+    "WI",
+    "SHANKLIN",
+    "SOUTH WOODFORD LONDON",
+    "SHERINGHAM",
+    "B186EW",
+    "WC25 9JQ",
+    "BERKSHIRE - RG19 4EW",
+    "WC1V6RB",
+    "NORTH YORKS ",
+    "HAMPSHIRE  SO516BD",
+    "ARDVASAR",
+    "PL",
+    "N.IRELAND",
+    "N IRELAND BT521PG",
+    "EN54NZ",
+    "ISLINGTON SOUTH",
+    "LONDON W2H 9JQ",
+    "M23FX",
+    "LEICESTESHIRE",
+    "HAVERING",
+    "HURSTPIERPOINT",
+    "SALISBURY, WILTSHIRE",
+    "DEANE",
+    "SS11EG",
+    "ROSS-SHIRE ",
+    "WEST MIDLANDS   ",
+    "EAST SUSSEX BN3-3JE",
+    "OXFORDSHIRE ONLY -",
+    "WARRINGTON, ENGLAND",
+    "HERTS,.",
+    "B82NA",
+    "WEST YORKSHIRE BD4 9RY",
+    "MERSYESIDE",
+    "E.SUSSEX.",
+    "BATTERSEA",
+    "BATH, N SOMERSET",
+    "NORTHATS",
+    "ESSEX .",
+    "WEST SUSSEX BN35TD",
+    "EAST YORKSHIRE  ",
+    "ILFORD ESSEX  ",
+    "PO107GQ",
+    "LEICESTER LE9 6XX",
+    "WORCSTERSHIRE",
+    "KILMALCOLM",
+    "RHONE",
+    "WARWICKSHIRE   ",
+    "T011 0E2",
+    "STRATHAVEN",
+    "CUFFLEY",
+    "MANCHESTER M5 2TS",
+    "STROUD ",
+    "B147QT",
+    "WORCESTERSHIRE,",
+    "MK22NX",
+    "ROTHERHAM ",
+    "G.MANCHESTER",
+    "Y01 9RA",
+    "NEWCASTLE UPON TYNE,",
+    "PA4 8XU",
+    "CRICKLEWOOD.",
+    "PERTHSHIRE  ",
+    "ROSS-SHIRE, ",
+    "LANARKSHIRE, SCOTLAND",
+    "DURHAM, UNITED KINGDOM",
+    "HIGLAND",
+    "CF32EP",
+    "SWITZERLAND",
+    "WV13RN",
+    "LONDON W5  1ET",
+    "INVERNESS-SHIRE ",
+    "N YORKS ",
+    "KENT ME80SN",
+    "COVENTRY WARWICKSHIRE  ",
+    "BASINGSTOKE HAMPSHIRE ",
+    "DERBYSHIRE DE248GX",
+    "BERWICK-ON-TWEED",
+    "AYLESBURY,BUCKS",
+    "BRAUNTON",
+    "ESSEX LG6 3SZ",
+    "Not Available",
+    "HERTFORD",
+    "LONDON SW1Y",
+    "N E LINCOLNSHIRE",
+    "THURSO",
+    "ARGYLL",
+    "SOUTH GLAMORGAN",
+    "POOLE",
+    "BOLTON",
+    "GB-LND",
+    "WETHERBY",
+    "KNUTSFORD",
+    "THAMES DITTON",
+    "PETERBOROUGH",
+    "FORTROSE",
+    "LINGFIELD",
+    "CITY OF EDINBURGH",
+    "NEWTON ABBOT",
+    "BUCKINHAMSHIRE",
+    "LONDON WC2A",
+    "MB",
+    "TOKYO",
+    "MIDDLESBOROUGH",
+    "CIRENCESTER",
+    "LONDON EC1R",
+    "LONDON N20",
+    "BERSHIRE",
+    "LONDON W12",
+    "DUNFERMLINE",
+    "GUERNSEY",
+    "WEST BERKSHIRE",
+    "BIRMINGHAM ",
+    "TW59EX",
+    "N211RA",
+    "MG18 1NW",
+    "MIDDX, .",
+    "SOUTH YORKS",
+    "KENTISH TOWN",
+    "FINTSHIRE",
+    "LEICESTERSHIRE  ",
+    "COUNTY FERMANAGH",
+    "HADDINGTON",
+    "PEEBLES",
+    "N SOMERSET",
+    "LONDON SE14",
+    "WARWICKS",
+    "SLOUGH BERKS ",
+    "MANCHESTER, ",
+    "KNOTTINGLEY",
+    "EPPING",
+    "NG",
+    "HUMBERSIDE.     ",
+    "WC2 9JQ",
+    "BOLTON ",
+    "MANCHESTER LANCASHIRE",
+    "HENLEY-ON-THAMES",
+    "THORNTON HEATH",
+    "ISLINGTON LONDON BORO",
+    "CM2 OAW",
+    "CAMDEN",
+    "CREWE ",
+    "NOTTHINGHAMSHIRE",
+    "STONEHAVEN",
+    "LONDON E6",
+    "HOLLAND PARK",
+    "PAISLEY PA23 2SJ",
+    "WEST YORSKSHIRE",
+    "GLOS      ",
+    "NOTTINGHAM   ",
+    "IP13 EJ",
+    "BIDEFORD",
+    "HERTS.  ",
+    "FLEETWOOD",
+    "WEST YORKSHIRE/YORKSHIRE AND THE HUMBER",
+    "SHIPSTON-ON-STOUR",
+    "PULBOROUGH",
+    "HAO 4BA",
+    "MILTON KEYNES ",
+    "DORSET,    ",
+    "WEST YOKSHIRE ",
+    "WILTSHIRE  ",
+    "SUFFOLK  IP121BL",
+    "W6 0LH",
+    "HERTS,  ",
+    "WC2R 9JQ",
+    "EDINBURGH CITY",
+    "ROBERTSBRIDGE",
+    "CRAIGAVON, CO ARMAGH",
+    "LONGFIELD",
+    "N DEVON",
+    "TQ12 4LJ",
+    "NOTTS   ",
+    "WINTON  BOURNEMOUTH",
+    "WEST GLAM   ",
+    "HERTFORDSHIRE  WD48LR",
+    "APPLICABLE",
+    "TIPTON",
+    "DROMORE",
+    "OUTER HEBRIDES",
+    "NORTH KENSINGTON",
+    "D74 7SP",
+    "UNITED KINGDOM.",
+    "HERTFORDSHIRE WD2 4YX",
+    "HA12RZ",
+    "WORTHING WEST SUSSEX ",
+    "W.MIDLANDS. ",
+    "EC1V 4PW",
+    "WEMBLY ,MIDDLESEX ,",
+    "BATH,AVON ",
+    "NORTH WALSHAM",
+    "GREAT MANCHESTER",
+    "HAVEN",
+    "NOT GIVEN",
+    "HERTS SG6 9BL",
+    "BH216QY",
+    "PO7 7AN",
+    "GREAT MANCHESTER ",
+    "BERKSHIRE,  ",
+    "113",
+    "PLEASE SELECT REGION, STA",
+    "TAYPORT",
+    "GLAM ",
+    "CWMBRAN ",
+    "WILTSHIRE     ",
+    "REDDITCH      WORCS     ",
+    "MIDLOTHIAN, SCOTLAND",
+    "BELVEDERE",
+    "DEVON RQ2 7FF",
+    "Y ",
+    "TYNE & WEAR NE15 5SX",
+    "MIDDX  ",
+    "NORTHAMPTONSHIREQ",
+    "KIRKHAM",
+    "W. SUSSEX",
+    "TAIN",
+    "LEEDS LS 185",
+    "EN91JH",
+    "SW164HX",
+    "DOVER KENT",
+    "RYTON, TYNE AND WEAR",
+    "NEWTOWNABBEY CO ANTRIM ",
+    "BS18 1EH",
+    "N31HF",
+    "BT7",
+    "LANCASHIRE BB97TZ",
+    "POTTERS BAR  ",
+    "GLOUCESTERSHIRE,ENGLAND",
+    "WILTSHIRE (ENG)",
+    "LANCASHIRE BB3  1PL",
+    "TNE & WEAR",
+    "PE21 6SH",
+    "STAFFORDSHIRE MOORLANDS",
+    "ALL",
+    "SA29HJ",
+    "LEICESTERSHIRE , ",
+    "BANES ",
+    "WEST MIDLANDS B21 9QN",
+    "BURY, GREATER MANCHESTER ",
+    "CF31 JZ",
+    "SOMERSET    ",
+    "HITCHIN, HERTS   ",
+    "SELECT A COUNTRY FIRST",
+    "BOROUGH OF KENSINGTON & CHELSEA",
+    "GREATER MANCHESTER LANCASHIRE",
+    "CHOOSE STATE.",
+    "LANCASHIRE - NORTH WEST ENGLAND - ENGLAND",
+    "WHYTELEAFE",
+    "LANARKSHIRE SOUTH",
+    "CAMBRIDGESHIRE PE1  1NG",
+    "SUSSEX RH17 5QL",
+    "IV12 4U",
+    "GROVE, LONDON",
+    "LDY",
+    "OX172DS",
+    "W.YORKS ",
+    "WASHINGTON  TYNE & WEAR ",
+    "FYLDE, LANCASHIRE",
+    "E179LG",
+    "STOCKPORT, CHESHIRE ",
+    "WF45NG",
+    "WARWICKSHIRE CV3 6LG",
+    "B14 6DT",
+    "ROXBURGHSHIRE ",
+    "HERTS. .",
+    "DEVON PL22AW",
+    "HAO 2AF",
+    "DO",
+    "FARNBOROUGH ",
+    "LONDON",
+    "LONDON EC1V",
+    "CHELMSFORD",
+    "ROSS-SHIRE",
+    "SLOUGH",
+    "LONDON E16",
+    "LONDON E",
+    "HEXHAM",
+    "ISLEWORTH",
+    "LONDON W10",
+    "NOTTINGHAMSHIER",
+    "LINCS",
+    "ALFORD",
+    "PORT",
+    "STANSTED",
+    "LONDON W1J",
+    "HERTS.",
+    "LONDON SW7",
+    "WEST LONDON",
+    "COTTINGHAM",
+    "CLEVELAND ",
+    "DEVON ",
+    "SOMERSET   BA99RZ",
+    "JERSEY",
+    "ORKNEY",
+    "W LOTHIAN",
+    "KIRKCALDY",
+    "CF14 3ND",
+    "SHEPPERTON",
+    "DORCHESTER",
+    "STROUD",
+    "MID LOTHIAN",
+    "SEVENOAKS KENT",
+    "B&NES",
+    "BEDFORDSHIRE,  ",
+    "LEICESTERSHIRE LE17LT",
+    "HERFORDSHIRE ",
+    "OXFORDSHIRE.",
+    "NORTH YORKSHIRE. ",
+    "WEST MIDLANS",
+    "GLOS,",
+    "LONDON SW17",
+    "SPENNYMOOR",
+    "SOUTH GLAM",
+    "PORTLAND",
+    "EASTLEIGH HAMPSHIRE",
+    "LONDON E3",
+    "W. MIDLANDS ",
+    "N4 0RG",
+    "WILTSHIRE,  ",
+    "N. IRELAND",
+    "BINLEY",
+    "UCKFIELD",
+    "WEST YORKSHIRE.     ",
+    "EAST  SUSSEX",
+    "PR9 OPR",
+    "MANCHESTER,  ",
+    "HOLMFIRTH",
+    "ANDREWS, FIFE ",
+    "0",
+    "HAMPSHIRE   ",
+    "SOWERBY BRIDGE",
+    "NOTS",
+    "YARMOUTH",
+    "FALMOUTH",
+    "UNITED KINGDOWN",
+    "BO'NESS",
+    "BIRM",
+    "N",
+    "MIDDLESEX UB82FX",
+    "LANCASHIRE , ",
+    "BARLBOROUGH CHESTERFIELD",
+    "M15 6PB",
+    "EYNSHAM",
+    "INVERNESS -SHIRE",
+    "SCOTLAND, UK",
+    "CHALFONT ST GILES",
+    "HEREFORD  ",
+    "BERKSHIRE         ",
+    "WEST MIDLANDS .",
+    "SWINDON, WILTSHIRE",
+    "WS4 8JP",
+    "COLCHESTER ESSEX ",
+    "CHESHIRE   ",
+    "LANCS.",
+    "PORT GLASGOW",
+    "NORFOLK NR305LA",
+    "OXFORD  OX27JF",
+    "NORTHAMPSONSHIRE",
+    "EAST DULWICH",
+    "WEMBLEY,MIDDLESEX",
+    "SOUTHWOLD",
+    "LIVERPOOL MERSEYSIDE",
+    "ATHERSTONE",
+    "STANLEY",
+    "COUNTY OF CONWY",
+    "HANTS    ",
+    "E50QR",
+    "BH235HF",
+    "RH123LZ",
+    "WAY STOCKTON ON TEES",
+    "DENBIGSHIRE",
+    "BB98NW",
+    "BERKSHIRE RG78NN",
+    "GWYNEDD  ",
+    "(PLEASE SELECT A STATE)",
+    "HANGER LANE",
+    "LARNE",
+    "HARROW  MIDDLESEX",
+    "CORNWALL TR15 15S",
+    "BN21 2AH",
+    "GREATER LONDON W5  3AY",
+    "LONDON SE27",
+    "SURREY CR5  3TF",
+    "NR BOSTON, LINCS. ",
+    "-- PLEASE SELECT --",
+    "SUFFOLK   ",
+    "COUNTY DURHAM DH07 8SH",
+    "CHELTENHAM GLOS",
+    "M89LE",
+    "BEDFORDHSIRE",
+    "WOOLWICH",
+    "HAMPSHIRE SO197GB",
+    "HERTFORDSHIRE.     ",
+    "WALLSEND TYNE & WEAR",
+    "OLDHAM  LANCS",
+    "TAMWORTH, STAFFORDSHIRE.",
+    "SOUTH WOODFORD",
+    "WITTON BIRMINGHAM ",
+    "SOUTH GLAMORGAN CF7 7NQ",
+    "BRANDON",
+    "THIRSK",
+    "BERKSHIRE,",
+    "BRENTWOOD, ESSEX",
+    "INVERARAY",
+    "WESTHILL",
+    "CA2 8UU",
+    "LINCOLNSHIRE LN11 0JT",
+    "G468JU",
+    "KT19 BDA",
+    "ISLE OF WIGHT.",
+    "MAIDENHEAD, BERKS. ",
+    "NTH YORKS,  ",
+    "OLDHAM, LANCS",
+    "NP120DU",
+    "CARDIFF SOUTH GLAMORGAN",
+    "NEWCASTLE  TYNE & WEAR ",
+    "HAMPSHIRE S032 2UD",
+    "WORCESTERSHIRE  ",
+    "TN49QJ",
+    "MESEYSIDE",
+    "GREATER LONDON COUNTY,",
+    "GLOS  ",
+    "ROYSTON. HERTS. .",
+    "ASHTON UNDER LYNE",
+    "LINCOLSNHIRE",
+    "SALOP .",
+    "HFDS",
+    "LONON",
+    "STEVENSTON",
+    "RENFREWSHIE",
+    "HIGH WYCOMBE BUCKS ",
+    "OXFORD.  ",
+    "SS38AR",
+    "BACUP LANCASHIRE 0L13 8QL",
+    "NEW ROMNEY",
+    "HORNCASTLE LINCOLNSHIRE",
+    "ESSEXSS7 5HB",
+    "KENT (COUNTY)",
+    "SOUTH CROYDON ",
+    "MIDDLESEX , ",
+    "NORTH SOMT.",
+    "FK20FA",
+    "MIDDLESEX TW59NJ",
+    "WD2 2AS",
+    "EN 48A",
+    "MDDX.",
+    "HEATHROW",
+    "NE17JG",
+    "LEICESTERSHIRE",
+    "EAST SUSSEX",
+    "MIDLANDS",
+    "LONDON N3",
+    "SHROPSHIRE",
+    "CAMBRIDGESHIRE",
+    "LONDON N1",
+    "YORKSHIRE",
+    "CAERDYDD",
+    "WEST LOTHIAN",
+    "MANCHESTER, GREATER MANCHESTER",
+    "CO DURHAM",
+    "EDINBURGH, CITY OF",
+    "EAST MIDLANDS",
+    "OXFORD",
+    "STATE CODE (U.S. ONLY)",
+    "GLOUCESTERSHIRE",
+    "DENBIGHSHIRE",
+    "DEREHAM",
+    "ST ALBANS",
+    "OXFORDSHIRE ",
+    "RAINHAM",
+    "BERSKHIRE",
+    "BRENTWOOD",
+    "ENGLAND - UK",
+    "WILTSHIRE ",
+    "CONGLETON",
+    "HAILSHAM",
+    "WORCESTERSHIRE DY18 9QB",
+    "DERBYSHIRE ",
+    "WITSHIRE",
+    "EPPING, ESSEX",
+    "SOUTH GLAM ",
+    "KETTERING",
+    "LEEDS ",
+    "BENFLEET",
+    "NEWCASTLE UPON TYNE ",
+    "CT196HQ",
+    "M20 0RN",
+    "DEVON TQ97SP",
+    "FLEET",
+    "WIGHT",
+    "HERTFORDSHIRE WD63EW",
+    "DURHAM COUNTY",
+    "CO. TYRONE",
+    "LIVERPOOL ",
+    "LEICS ",
+    "NORTHAMPTONSHIRE ",
+    "SIR FYNWY",
+    "MELKSHAM",
+    "NORTHUMBERLAND ",
+    "STALYBRIDGE",
+    "BN5 0JW",
+    "MONTROSE",
+    "CHESHAM",
+    "LONDON N2",
+    "LONDON E17",
+    "MERTHYR TYDFIL",
+    "BNE",
+    "COL. DURHAM",
+    "ABERDEEN ",
+    "ISLE OF WIGHT,",
+    "NR.WIGAN",
+    "LONDON SE8",
+    "FROME",
+    "NOTTINGHAM,NOTTS,",
+    "CASTLEBAY",
+    "CAMBRIDGE ",
+    "HERTS,   ",
+    "WOKING SURREY",
+    "TOTTENHAM",
+    "GWENT  ",
+    "LONDON E15",
+    "EALING",
+    "ASHFORD KENT",
+    "FARINGDON",
+    "G312BB",
+    "EC4 6BJ",
+    "HARPENDEN HERTS",
+    "SOUTH SHIELDS",
+    "STOKE ON TRENT   ",
+    "CITY AND COUNTY OF THE CITY OF LONDON",
+    "ST HELENS MERSEYSIDE",
+    "WEST YORKSHIRE WP10 4BE",
+    "BLAYDON-ON-TYNE",
+    "MIDLANDS ",
+    "E130QS",
+    "WASHINGTON",
+    "ABERDARE",
+    "LONAN",
+    "CITY OF GLASGOW",
+    "SELECT COUNTY",
+    "CHRISTCHURCH DORSET",
+    "SHROPSHIRE TF118LG",
+    "B&NES BA13JP",
+    "UXBRIDGE ",
+    "MED-GLAMORGAN,  ",
+    "ESSEX SS132LF",
+    "CROMARTY",
+    "ABBOT",
+    "BAMBURGH",
+    "BERKELEY",
+    "NEATN PORT TALBOT",
+    "SY",
+    "GREAT MANCHESTER,",
+    "EXETER,DEVON,",
+    "WARLEY ",
+    "BIRMINGHAM B463EJ",
+    "LANCS     ",
+    "KILBUCK HAYDOCK",
+    "TAVISTOCK",
+    "WEST MIDLANDS COUNTY",
+    "RYE",
+    "HOUNSLOW ",
+    "MIDDLESEX TW18 8AS",
+    "MORECOMBE, LANCASHIRE",
+    "GLOUCESTERSHIRE GL7 5QN",
+    "FOLESHILL",
+    "DUMFRIESSSHIRE",
+    "HAMSPHIRE",
+    "LONDON N200YZ",
+    "S667AL",
+    "SOUTH YORKSHIRE DN3 5HY",
+    "KENT ME173NQ",
+    "HERTFORDSHIRE.    ",
+    "W. MIDLANDS.    ",
+    "MIDOLOTHIAN",
+    "CAPITAL",
+    "KENT TN9  1SS",
+    "WEST MDLANDS ",
+    "ST COLUMB",
+    "NEWTON STEWART",
+    "CAERNARFON",
+    "ARNAGH",
+    "LEEDS.     ",
+    "WEST MIDLANDS B29 7HY",
+    "HOVE, SUSSEX ",
+    "NN15 5BL",
+    "MK19 7AH",
+    "RH19 8LG",
+    "CRANFIELD BEDFORDSHIRE",
+    "MIDDLE GLAMORGAN ",
+    "GLA",
+    "DE742SA",
+    "M145AQ",
+    "BELLSHILL LANARKSHIRE",
+    "SURREY GU248QX",
+    "NORTH WILTSHIRE",
+    "WA15 3JG",
+    "FYLDE LANCASHIRE",
+    "BD111DF",
+    "CANTERBURY KENT",
+    "NOTTINGHAM NG5 1EX",
+    "NORTHUMEBERLAND",
+    "WEST - MIDLANDS",
+    "SOUTH HUMBERSIDE  ",
+    "MEOPHAM",
+    "WESTHILL ABERDEENSHIRE",
+    "CULLOMPTON",
+    "SOUTH HUMBERSIDE.",
+    "LONDON, UK",
+    "MIDDLEWICH",
+    "W1U 2HB",
+    "HERTFORDSHURE",
+    "NW11 ODH",
+    "GRINSTEAD",
+    "SEAFORD",
+    "DA118JN",
+    "ONGAR",
+    "BD50BA",
+    "WANSTEAD",
+    "LANCASTER ",
+    "MK196NT",
+    "PA384BY",
+    "WORCESTERSHIRE   ",
+    "RADFORD NOTTINGHAM",
+    "FLINT",
+    "KESTON",
+    "SW5 0NJ",
+    "WEST MILDLANDS",
+    "NORTHAMPTONSHIRE NN144JL",
+    "WEST MIDLANDS",
+    "MIDLOTHIAN",
+    "STIRLINGSHIRE",
+    "ROMFORD",
+    "SELECT A STATE",
+    "LOTHIAN",
+    "BECKENHAM",
+    "LONDON N17",
+    "MIDLOTHIAN ",
+    "WAKEFIELD, WEST YORKSHIRE",
+    "STAFFORDSHIRE ",
+    "MARICOPA, AZ",
+    "W SUSSEX",
+    "HODDESDON",
+    "BLACKWOOD",
+    "CANTERBURY",
+    "LONDON   ",
+    "DALRY",
+    "EAST SUSSEX BN37BD",
+    "NEW ROMNEY KENT",
+    "HORSHAM",
+    "ESSEX   ",
+    "EDH",
+    "NOTTINGHAM  ",
+    "EDINBURGH,",
+    "WR136DT",
+    "MILL HILL",
+    "SS11EF",
+    "DUMFRIES AND GALLOWAY",
+    "MARKET HARBOROUGH",
+    "HERTS      ",
+    "UNDER-LYNE",
+    "LONDON SE26",
+    "NEW SOUTH WALES",
+    "CRIEFF",
+    "LONDON SE19",
+    "MONMOUTH",
+    "SOUTH GLOUCESTERSHIRE BS347BY",
+    "LONDON.   E1 8BJ",
+    "GTR MANCHESTER  ",
+    "GREATER LONDON COUNTY",
+    "NORTHOLT",
+    "EN",
+    "BT40 1LA",
+    "STOKE-ON-TRENT STAFFORDSHIRE",
+    "SOUTH GLOS",
+    "DEVON.",
+    "EAST YORKSHIRE ",
+    "BRYNTEG",
+    "BIRMINGHAM,  ",
+    "BUXTON",
+    "NTH. HUMBERSIDE",
+    "BERKS. ",
+    "SHEFFIELD SOUTH YORKSHIRE",
+    "CARMARTHEN",
+    "DORSET,  ",
+    "GLAISHER DRIVE",
+    "BRIERLEY HILL",
+    "MALVERN",
+    "CORNWALL TR12 2SR",
+    "MORAY IV30 3AE",
+    "CM4 OAT",
+    "HATCH END",
+    "BRAINTREE ESSEX ",
+    "CO43RN",
+    "W1W7LT",
+    "STOKE ON TRENT",
+    "WIGAN ",
+    "NEWPORT ROAD CARDIFF ",
+    "YORKSHIRE Y018SU",
+    "OXFORDSHIRE  ",
+    "EVESHAM",
+    "HP5 3HE",
+    "PO9M 1SA",
+    "PL1 5LH",
+    "GREATER  MANCHESTER ",
+    "BT37 ORU",
+    "BERKSHIRE SL6  1ES",
+    "PE129EA",
+    "AMMANFORD",
+    "HR2 2BP",
+    "LONDON SE186SS",
+    "GT YARMOUTH NORFOLK ",
+    "WEST MIDLANDS B94TS",
+    "HD9  2JT",
+    "LONDON N31CA",
+    "CARMARTHANSHIRE  ",
+    "SEBLY ",
+    "WC1A1DG",
+    "YO16 2NR",
+    "SHAWLANDS GLASGOW ",
+    "WENLOCK ROAD",
+    "SELECT STATE/PROVINCE",
+    "NI",
+    "CALLINGTON",
+    "CORSHAM",
+    "KINGSWINFORD",
+    "GREATER LONADON",
+    "WALLINGTON",
+    "HIGHBRIDGE",
+    "STREET LONDON",
+    "GUILDFORD SURREY ",
+    "WEST YORKS ",
+    "NEWHAM",
+    "ADDRESS LINE 5",
+    "BOURNE  LINCS",
+    "EESSEX",
+    "WS12 5AY",
+    "UB68GB",
+    "NOTTINGHMSHIRE",
+    "NEWCASTLE-UPON-TYNE",
+    "NORTHUMBERLAND TD151BN",
+    "PAISLEY, RENFREWSHIRE",
+    "SE93NE",
+    "W1U 1PJ",
+    "EN87AN",
+    "PLYMOUTH DEVON",
+    "MANCHESTER , ",
+    "BT436HB",
+    "WREXHAM CLWYD ",
+    "WEST SUSSEX,",
+    "BEDLINGTON",
+    "CARMARTHEN DYFRED",
+    "BUCKINGHAMSHIRE ENGLAND",
+    "WARW2ICKSHIRE",
+    "WORCS.",
+    "DUNBARTONSHIRE ",
+    "CO FERMANAGH ",
+    "LONDON E9",
+    "W GLAM",
+    "NR FRINTON ON SEA ESSEX",
+    "NOTTS.  ",
+    "GREATE MANCHESTER",
+    "ISLE OF WIGHT  ",
+    "WEST MILDLIND",
+    "CO. L/DERRY",
+    "LN12FR",
+    "WEST  MIDLANDS ",
+    "N15 4QF",
+    "S YORKS ",
+    "HAMPSHIRE SO50 5NU",
+    "SHEFFIELD DERBYSHIRE ",
+    "HAMPSHIRE      ",
+    "WEST SUSSEX, ",
+    "SA2 OXX",
+    "EC1N 2NX",
+    "LANCASHIRE,",
+    "NORTH YORKSHIRE .",
+    "BT71 5SG",
+    "LIVERPPOOL",
+    "WEST WALES",
+    "BERKSHRE",
+    ", UK",
+    "SOUTH YORKSHIRE, ",
+    "BUCKINGHAMSHIRE.    ",
+    "KENT TN1 IEN",
+    "KENT,",
+    "NORTH EAST LINCOLNSHIRE DN350HZ",
+    "SURBITON SURREY ",
+    "G22 6HJ",
+    "BUCKHURST HILL  ESSEX",
+    "WESTMINSTER W16 6BD",
+    "DARTFORD,KENT,",
+    "Y019 4FE",
+    "CM133XD",
+    "NORTHAMPTON,",
+    "BDF",
+    "SUSSEX RH10 2HD",
+    "ANDOVER HANTS ",
+    "DEVON EX172AH",
+    "HAINAULT",
+    "GL60JF",
+    "HORNCASTLE, LINCS.",
+    "TOWER HAMLETS E26AH",
+    "PLACE LIVERPOOL ",
+    "STAFFS WS11 8LL",
+    "DERRY, CO DERRY ",
+    "NOTTINGHAMSHIRE",
+    "GWENT",
+    "CANTERBURY - MEDWAY- TONBRIDGE",
+    "LIVERPOOL",
+    "SHEPTON MALLET",
+    "STEVENAGE",
+    "MORAYSHIRE",
+    "SUDBURY",
+    "COVENTRY",
+    "CO TYRONE",
+    "SUNDERLAND",
+    "CWMBRAN",
+    "ST HELENS",
+    "EAST RIDING OF YORKS",
+    "FALKIRK",
+    "- CANADA, MEXICO & USA ONLY -",
+    "SETTLE",
+    "NORTHAMPTON.",
+    "SUTTON COLDFIELD",
+    "N. YORKS",
+    "LONDON SW1E",
+    "LOUGHBOROUGH",
+    "LYMINGTON",
+    "LEATHERHEAD",
+    "DERRY",
+    "STRATHCARRON",
+    "ALEXANDRIA",
+    "KNOWSLEY",
+    "BANFFSHIRE ",
+    "STRATHCLYDE ",
+    "BURSLEM",
+    "HAMPSHIRE. ",
+    "EPSOM",
+    "LEICESTER, .",
+    "CUMBRIA   CA10 2HG",
+    "M88GF",
+    "TYNE & WEAR ",
+    "PETERLEE",
+    "BLACKBURN",
+    "CONWY COUNTY",
+    "BELFAST BT13LR",
+    "NORTH YORKSHIRE  ",
+    "GTR MANCHESTER ",
+    "LONDON NW9",
+    "W MIDS",
+    "DONCASTER, SOUTH YORKSHIRE",
+    "CANARY WHARF",
+    "SLOUGH ",
+    "DORSET BH192PQ",
+    "SOLIHULL, WEST MIDLANDS ",
+    "TWYDALL",
+    "STOCKON ON TEES",
+    "CLYDEBANK",
+    "IV30 IEB",
+    "WILTS SN2 6AF",
+    "NEWCASTLE",
+    "GREAT YARMOUTH",
+    "BORDERS",
+    "UNITED STATES KINGDOM",
+    "BERKS,",
+    "E SUSSEX ",
+    "PRESTON LANCASHIRE",
+    "ST. HELENS",
+    "CENTRAL",
+    "SELKIRK",
+    "ESSEX.",
+    "HA4 1QZ",
+    "FORDINGBRIDGE  SP63BQ",
+    "CHOOSE COUNTY",
+    "ESSEX IGI IQP ",
+    "GREATER LONDON - LONDON - ENGLAND",
+    "STAFFORDSHIRE,",
+    "BR29LW",
+    "STAFFS.",
+    "HOLMWOOD, DORKING",
+    "BURNHAM",
+    "CHICHESTER WEST SUSSEX",
+    "UPMINSTER",
+    "NORTHAMPSHIRE",
+    "WALLINGFORD",
+    "WARWICK ",
+    "B1  2JB",
+    "LL574YY",
+    "MERIONETH ",
+    "WOTTON-UNDER-EDGE",
+    "SHETLAND,",
+    "CO. ANTRIM BT28 3NE",
+    "LONDON LONDON",
+    "GLOUCESTERSHIRE  ",
+    "GREAT. SHELFORD, CAMBS.  ",
+    "CGN",
+    "GRAMPIAN  ",
+    "MANCHSTER",
+    "NEWBURY BERKSHIRE ",
+    "NOTTINGHAM, ",
+    "PWLLHELI",
+    "HRT",
+    "HEBDEN BRIDGE",
+    "TONBRIDGE, KENT",
+    "TONBRIDGE KENT",
+    "BL 4BG",
+    "CF8 1FQ"
+  ]
 
   // Fetch world regions on component mount
   useEffect(() => {
@@ -31,6 +1199,7 @@ const Search = ({ setSearchData }) => {
     try {
       const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
       setWorldRegions(distinct_world_regions);
+      setWorldRegions(['GB']);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
@@ -38,8 +1207,11 @@ const Search = ({ setSearchData }) => {
 
   const fetchSubRegions = async (SelectedRegion) => {
     try {
+      setSubRegionLoading(true);
       const { distinct_world_sub_regions } = await getAPI(`/distinctWorldSubRegions?region_selected=${SelectedRegion}`);
-      setSubRegions(distinct_world_sub_regions.slice(0, 10));
+      setSubRegions(distinct_world_sub_regions);
+      setSubRegions(worldSubRegion);
+      setSubRegionLoading(false);
     } catch (error) {
       console.error("Error fetching sub-regions:", error);
     }
@@ -49,10 +1221,6 @@ const Search = ({ setSearchData }) => {
     setSelectedRegion(region);
     fetchSubRegions(region);
     setSelectedSubRegion(null);
-  };
-
-  const handleSubRegionChange = (subRegion) => {
-    setSelectedSubRegion(subRegion);
   };
 
   const handleChange = (e, name) => {
@@ -75,7 +1243,7 @@ const Search = ({ setSearchData }) => {
     }
   }
 
-  const handleSaveChanges = async() => {
+  const handleSaveChanges = async () => {
     try {
 
       const { MATCH_MKID, PRIMARY_MKID, isMatched } = JSON.parse(localStorage.getItem('recently'));
@@ -93,107 +1261,168 @@ const Search = ({ setSearchData }) => {
     }
   }
 
+
+  // Filter regions based on search term
+  const filteredRegions = searchTerm
+    ? subRegions.filter(region =>
+      region.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    : subRegions.slice(0, 8);
+
+  // Handle region selection
+  const handleSubRegionChange = (region) => {
+    setSelectedSubRegion(region);
+    setIsDropdownOpen(false); // Close the dropdown when a region is selected
+  };
+
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen((prev) => !prev);
+    if (!isDropdownOpen) {
+      setLoading(true); // Start loading when the dropdown is opened
+      setTimeout(() => {
+        setLoading(false); // Stop loading after a brief delay
+      }, 500); // Simulate a 500ms loading time
+    }
+  };
+
+
   return (
-    <div className="px-5 pt-4 pb-2 text-[#25245F] flex justify-between items-center">
-      <h1 className="text-lg font-semibold">Data Stewardship</h1>
-      <div className="flex flex-wrap gap-4 items-center">
-        {/* Static Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full">
-              <div className="flex items-center gap-2 text-xs">
-                <IoGitNetworkOutline className="text-[#0A78CD]" />
-                {selectedProvider ? selectedProvider : "Data Provider"}
-              </div>
-              <IoChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuGroup>
-              {worldProvider.map((provider, i) => (
-                <DropdownMenuItem key={i} onClick={() => setSelectedProvider(provider)}>
-                  {provider}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <>
+      <div className="px-5 pt-4 pb-2 text-[#25245F] flex justify-between items-center">
+        <h1 className="text-lg font-semibold">Data Stewardship</h1>
+        <div className="flex flex-wrap gap-4 items-center">
+          {/* Static Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full">
+                <div className="flex items-center gap-2 text-xs">
+                  <IoGitNetworkOutline className="text-[#0A78CD]" />
+                  {selectedProvider ? selectedProvider : "Data Provider"}
+                </div>
+                <IoChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuGroup>
+                {worldProvider.map((provider, i) => (
+                  <DropdownMenuItem key={i} onClick={() => setSelectedProvider(provider)}>
+                    {provider}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* World Region Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full">
-              <div className="flex items-center gap-2 text-xs">
-                <IoGlobeOutline className="text-[#0A78CD]" />
-                {selectedRegion ? selectedRegion : "World Region"}
-              </div>
-              <IoChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuGroup>
-              {worldRegions.length > 0 ? worldRegions.map((region, index) => (
-                <DropdownMenuItem key={index} onClick={() => handleRegionChange(region)}>
-                  {region}
-                </DropdownMenuItem>
-              )) : <p>Data not found</p>}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          {/* World Region Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full">
+                <div className="flex items-center gap-2 text-xs">
+                  <IoGlobeOutline className="text-[#0A78CD]" />
+                  {selectedRegion ? selectedRegion : "World Region"}
+                </div>
+                <IoChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuGroup>
+                {worldRegions.length > 0 ? worldRegions.map((region, index) => (
+                  <DropdownMenuItem key={index} onClick={() => handleRegionChange(region)}>
+                    {region}
+                  </DropdownMenuItem>
+                )) : <p>Data not found</p>}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* World Sub-Region Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full">
-              <div className="flex items-center gap-2 text-xs">
-                <IoGlobeOutline className="text-[#0A78CD]" />
-                {selectedSubRegion ? selectedSubRegion : "World Sub Region"}
-              </div>
-              <IoChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuGroup>
-              {subRegions.length > 0 ? subRegions.map((subRegion, index) => (
-                <DropdownMenuItem key={index} onClick={() => handleSubRegionChange(subRegion)}>
-                  {subRegion}
-                </DropdownMenuItem>
-              )) : <p>Data not found</p>}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          {/* World Sub-Region Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="bg-[#F9FAFB] hover:bg-[#fbfdfe] p-4 flex items-center text-[#66668F] font-normal justify-center gap-5 rounded-full"
+                onClick={handleDropdownToggle} // Toggle the dropdown on button click
+              >
+                <div className="flex items-center gap-2 text-xs">
+                  <IoGlobeOutline className="text-[#0A78CD]" />
+                  {selectedSubRegion ? selectedSubRegion : "World Sub Region"}
+                </div>
+                <IoChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            {isDropdownOpen && ( // Only show dropdown when it's open
+              <DropdownMenuContent
+                className="w-56 p-2 bg-white border rounded shadow-md"
+                style={{ maxHeight: "400px", overflowY: "auto" }} // Scrollable area
+              >
+                <div className="p-2">
+                  <input
+                    type="text"
+                    placeholder="Search region..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-[#0A78CD]"
+                  />
+                </div>
+                <DropdownMenuGroup>
+                  {subRegionLoading ? (
+                    <div className="p-2 text-sm text-center text-gray-500">
+                      <span>Loading...</span>
+                    </div>
+                  ) : filteredRegions.length > 0 ? (
+                    filteredRegions.map((region, index) => (
+                      <DropdownMenuItem
+                        key={index}
+                        onClick={() => handleSubRegionChange(region)}
+                        className="p-2 text-sm hover:bg-[#f5f5f5] cursor-pointer rounded"
+                      >
+                        {region}
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <p className="p-2 text-sm text-gray-500">No regions found</p>
+                  )}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            )}
+          </DropdownMenu>
 
-        {/* Company Input */}
-        <div className="relative">
-          <FaCity className="absolute text-[#0A78CD] mt-3 ml-3 text-lg" />
-          <input
-            value={company}
-            onChange={(e) => handleChange(e, 'Company')}
-            className="bg-[#F9FAFB] p-3 pl-9 w-44 text-xs rounded-full placeholder:text-xs placeholder:text-[#66668F] focus:outline-none focus:ring-1 focus:ring-[#F2F4F5]"
-            placeholder="Enter Company"
-          />
+          {/* Company Input */}
+          <div className="relative">
+            <FaCity className="absolute text-[#0A78CD] mt-3 ml-3 text-lg" />
+            <input
+              value={company}
+              onChange={(e) => handleChange(e, 'Company')}
+              className="bg-[#F9FAFB] p-3 pl-9 w-44 text-xs rounded-full placeholder:text-xs placeholder:text-[#66668F] focus:outline-none focus:ring-1 focus:ring-[#F2F4F5]"
+              placeholder="Enter Company"
+            />
+          </div>
+
+          {/* City Input */}
+          <div className="relative">
+            <MdLocationCity className="absolute text-[#0A78CD] mt-3 ml-3 text-lg" />
+            <input
+              value={city}
+              onChange={(e) => handleChange(e, 'City')}
+              className="bg-[#F9FAFB] p-3 pl-9 w-44 text-xs rounded-full placeholder:text-xs placeholder:text-[#66668F] focus:outline-none focus:ring-1 focus:ring-[#F2F4F5]"
+              placeholder="Enter City"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <button onClick={() => handleSearch()} className="bg-[#0A78CD] box-shadow py-3 px-5 text-white text-xs font-semibold rounded-full">
+            Search
+          </button>
+          <button onClick={() => handleSaveChanges()} className="text-[#0A78CD] border border-[#0A78CD] text-nowrap text-xs py-3 px-5 font-semibold rounded-full">
+            Save Changes
+          </button>
         </div>
 
-        {/* City Input */}
-        <div className="relative">
-          <MdLocationCity className="absolute text-[#0A78CD] mt-3 ml-3 text-lg" />
-          <input
-            value={city}
-            onChange={(e) => handleChange(e, 'City')}
-            className="bg-[#F9FAFB] p-3 pl-9 w-44 text-xs rounded-full placeholder:text-xs placeholder:text-[#66668F] focus:outline-none focus:ring-1 focus:ring-[#F2F4F5]"
-            placeholder="Enter City"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <button onClick={() => handleSearch()} className="bg-[#0A78CD] box-shadow py-3 px-5 text-white text-xs font-semibold rounded-full">
-          Search
-        </button>
-        <button onClick={() => handleSaveChanges()} className="text-[#0A78CD] border border-[#0A78CD] text-nowrap text-xs py-3 px-5 font-semibold rounded-full">
-          Save Changes
-        </button>
       </div>
-    </div>
+      <div className="px-5 flex items-center gap-2">
+        <p className="text-xs">Total Records : </p>
+        <strong>{totalRecords}</strong>
+      </div>
+    </>
   );
 };
 

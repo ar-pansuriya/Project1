@@ -24,3 +24,40 @@ body {
     --radius: 0.5rem;
   }
 }
+
+/* Scrollbar for Webkit-based browsers (e.g., Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 6px; /* Width of the vertical scrollbar */
+  height: 6px; /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background color of the scrollbar track */
+  border-radius: 6px; /* Rounded edges for the track */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Shadow inside the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a83bc; /* Thumb (scroll handle) color */
+  border-radius: 6px; /* Rounded edges for the thumb */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4); /* Shadow on the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2b6d99; /* Slightly darker blue on hover */
+  border-radius: 6px; /* Ensure rounded edges on hover */
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); /* More pronounced shadow on hover */
+}
+
+/* Scrollbar for Firefox */
+* {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: #3a83bc #f1f1f1; /* Thumb color and track color */
+  /* Note: Firefox does not support border-radius or shadow directly for scrollbars */
+}
+
+/* Scrollbar for Internet Explorer and legacy Edge */
+.scroll-container {
+  -ms-overflow-style: scrollbar; /* For IE */
+  scrollbar-width: thin; /* Makes scrollbar thin */
+}

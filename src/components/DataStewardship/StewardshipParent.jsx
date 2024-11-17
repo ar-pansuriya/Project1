@@ -6,13 +6,12 @@ import axios from "axios";
 import { getAPI } from "@/Functions/apiFunction";
 
 
-const StewardshipParent = ({ searchData }) => {
+const StewardshipParent = ({ searchData, setTotalRecords }) => {
   // State hooks for managing data and UI states
   const [stewardshipData, setStewardshipData] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state for data fetch
   const [error, setError] = useState(null); // Error state for handling API errors
-  const [totalRecords, setTotalRecords] = useState(6666); // Total record count from API
   const [onNextPre, setOnNextPre] = useState(null);
   const data = [
     {
@@ -628,7 +627,7 @@ const StewardshipParent = ({ searchData }) => {
       try {
 
         const mkidData = await getAPI("/getDataDistinctMKID");
-        // console.log("mkidData======", mkidData);
+        console.log("mkidData======", mkidData);
         setStewardshipData(mkidData);
       } catch (error) {
         // Handle any errors during the fetch
@@ -686,19 +685,21 @@ const StewardshipParent = ({ searchData }) => {
 
 
   return (
-    <div className="w-full h-full flex justify-between px-5 py-4 gap-6">
-      {/* Left panel displaying data */}
-      <DataStewardshipDataLeft
-        stewardshipData={stewardshipData}
-        onSelectData={handleSelectData}
-        totalRecords={totalRecords}
-        onNextPre={onNextPre}
-      />
-      {/* Right panel displaying selected data */}
-      {
-        selectedData && <DataStewardshipDataRight selectedData={selectedData} setOnNextPre={setOnNextPre} />
-      }
-    </div>
+    <>
+      <div className="w-full h-full flex justify-between px-5 py-4 gap-6">
+
+        {/* Left panel displaying data */}
+        <DataStewardshipDataLeft
+          stewardshipData={stewardshipData}
+          onSelectData={handleSelectData}
+          onNextPre={onNextPre}
+        />
+        {/* Right panel displaying selected data */}
+        {
+          selectedData && <DataStewardshipDataRight selectedData={selectedData} setOnNextPre={setOnNextPre} />
+        }
+      </div>
+    </>
   );
 };
 
