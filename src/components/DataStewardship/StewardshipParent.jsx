@@ -677,10 +677,10 @@ const StewardshipParent = ({ searchData, setTotalRecords }) => {
     // Function to fetch stewardship data
     const getDataDistinctMKID = async () => {
       try {
-        // const mkidData = await getAPI("/getDataDistinctMKID");
-        // console.log("mkidData======", mkidData);
-        // setStewardshipData(mkidData);
-        setStewardshipData(data);
+        const mkidData = await getAPI("/getDataDistinctMKID");
+        console.log("mkidData======", mkidData);
+        setStewardshipData(mkidData);
+        // setStewardshipData(data);
       } catch (error) {
         // Handle any errors during the fetch
         console.error("Error fetching data:", error);
@@ -693,8 +693,8 @@ const StewardshipParent = ({ searchData, setTotalRecords }) => {
     // Function to fetch total record count from API
     const fetchTotalRecords = async () => {
       try {
-        // const { overall_count_for_match_merge } = await getAPI("/countRecords");
-        // setTotalRecords(overall_count_for_match_merge);
+        const { overall_count_for_match_merge } = await getAPI("/countRecords");
+        setTotalRecords(overall_count_for_match_merge);
       } catch (error) {
         console.error("Error fetching total record count:", error);
       }

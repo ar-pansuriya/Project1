@@ -1201,9 +1201,9 @@ const Search = ({ setSearchData, totalRecords }) => {
 
   const fetchWorldRegions = async () => {
     try {
-      // const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
-      // setWorldRegions(distinct_world_regions);
-      setWorldRegions(["GB"]);
+      const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
+      setWorldRegions(distinct_world_regions);
+      // setWorldRegions(["GB"]);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
@@ -1212,11 +1212,11 @@ const Search = ({ setSearchData, totalRecords }) => {
   const fetchSubRegions = async (SelectedRegion) => {
     try {
       setSubRegionLoading(true);
-      // const { distinct_world_sub_regions } = await getAPI(
-      //   `/distinctWorldSubRegions?region_selected=${SelectedRegion}`
-      // );
-      // setSubRegions(distinct_world_sub_regions);
-      setSubRegions(worldSubRegion);
+      const { distinct_world_sub_regions } = await getAPI(
+        `/distinctWorldSubRegions?region_selected=${SelectedRegion}`
+      );
+      setSubRegions(distinct_world_sub_regions);
+      // setSubRegions(worldSubRegion);
       setSubRegionLoading(false);
     } catch (error) {
       console.error("Error fetching sub-regions:", error);
@@ -1239,10 +1239,10 @@ const Search = ({ setSearchData, totalRecords }) => {
 
   const handleSearch = async () => {
     try {
-      // const response = await getAPI(
-      //   `/filteredDataDistinctMKID?data_providers=${selectedProvider}&world_region=${selectedRegion}&world_sub_region=${selectedSubRegion}&company=${company}&city=${city}`
-      // );
-      // setSearchData(response);
+      const response = await getAPI(
+        `/filteredDataDistinctMKID?data_providers=${selectedProvider}&world_region=${selectedRegion}&world_sub_region=${selectedSubRegion}&company=${company}&city=${city}`
+      );
+      setSearchData(response);
       setSelectedProvider("");
       setSelectedSubRegion("");
       setSelectedRegion("");
@@ -1258,21 +1258,21 @@ const Search = ({ setSearchData, totalRecords }) => {
       );
       console.log(MATCH_MKID, PRIMARY_MKID, isMatched, "-------2222");
 
-      // if (isMatched) {
-      //   const response = await postAPI(
-      //     `/matchRecord`,
-      //     PRIMARY_MKID,
-      //     MATCH_MKID
-      //   );
-      // } else {
-      //   const response = await postAPI(
-      //     `/notMatchRecord`,
-      //     PRIMARY_MKID,
-      //     MATCH_MKID
-      //   );
-      // }
+      if (isMatched) {
+        const response = await postAPI(
+          `/matchRecord`,
+          PRIMARY_MKID,
+          MATCH_MKID
+        );
+      } else {
+        const response = await postAPI(
+          `/notMatchRecord`,
+          PRIMARY_MKID,
+          MATCH_MKID
+        );
+      }
 
-      // const response = await getAPI(`/unlockRecord`, PRIMARY_MKID, MATCH_MKID);
+      const response = await getAPI(`/unlockRecord`, PRIMARY_MKID, MATCH_MKID);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }

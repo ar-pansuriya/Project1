@@ -202,8 +202,8 @@ const StewardshipLeft = ({ stewardshipData, onSelectData, onNextPre }) => {
   const toggleExpand = async (uniqueKey, item) => {
     console.log(item, "=***********");
     try {
-      // const response = await getAPI(`/getDataMKID`, item.MK_ID);
-      const response = data;
+      const response = await getAPI(`/getDataMKID`, item.MK_ID);
+      // const response = data;
       const newdata = response.map((v) => {
         const MATCH_SOURCE_DATA = JSON.parse(v.MATCH_SOURCE_DATA);
         const PRIMARY_MKID_DATA = JSON.parse(v.PRIMARY_MKID_DATA);
