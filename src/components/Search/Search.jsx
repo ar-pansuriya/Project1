@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { IoGitNetworkOutline, IoGlobeOutline, IoChevronDown } from "react-icons/io5";
+import {
+  IoGitNetworkOutline,
+  IoGlobeOutline,
+  IoChevronDown,
+} from "react-icons/io5";
 import { FaCity } from "react-icons/fa6";
 import { MdLocationCity } from "react-icons/md";
 import {
@@ -10,15 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { getAPI } from "@/Functions/apiFunction";
+import { postAPI } from "@/Functions/apiFunction";
 
 const Search = ({ setSearchData, totalRecords }) => {
-  const [worldProvider, setWorlProvider] = useState(['EFX', 'CS', 'OC']);
+  const [worldProvider, setWorlProvider] = useState(["EFX", "CS", "OC"]);
   const [worldRegions, setWorldRegions] = useState([]);
   const [subRegions, setSubRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedSubRegion, setSelectedSubRegion] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedSubRegion, setSelectedSubRegion] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState("");
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
   const [subRegionLoading, setSubRegionLoading] = useState(false);
@@ -1187,8 +1191,8 @@ const Search = ({ setSearchData, totalRecords }) => {
     "TONBRIDGE, KENT",
     "TONBRIDGE KENT",
     "BL 4BG",
-    "CF8 1FQ"
-  ]
+    "CF8 1FQ",
+  ];
 
   // Fetch world regions on component mount
   useEffect(() => {
@@ -1197,9 +1201,9 @@ const Search = ({ setSearchData, totalRecords }) => {
 
   const fetchWorldRegions = async () => {
     try {
-      const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
-      setWorldRegions(distinct_world_regions);
-      setWorldRegions(['GB']);
+      // const { distinct_world_regions } = await getAPI("/distinctWorldRegions");
+      // setWorldRegions(distinct_world_regions);
+      setWorldRegions(["GB"]);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
@@ -1208,8 +1212,10 @@ const Search = ({ setSearchData, totalRecords }) => {
   const fetchSubRegions = async (SelectedRegion) => {
     try {
       setSubRegionLoading(true);
-      const { distinct_world_sub_regions } = await getAPI(`/distinctWorldSubRegions?region_selected=${SelectedRegion}`);
-      setSubRegions(distinct_world_sub_regions);
+      // const { distinct_world_sub_regions } = await getAPI(
+      //   `/distinctWorldSubRegions?region_selected=${SelectedRegion}`
+      // );
+      // setSubRegions(distinct_world_sub_regions);
       setSubRegions(worldSubRegion);
       setSubRegionLoading(false);
     } catch (error) {
@@ -1224,49 +1230,59 @@ const Search = ({ setSearchData, totalRecords }) => {
   };
 
   const handleChange = (e, name) => {
-    if (name === 'Company') {
+    if (name === "Company") {
       setCompany(e.target.value);
-    } else if (name === 'City') {
-      setCity(e.target.value)
+    } else if (name === "City") {
+      setCity(e.target.value);
     }
-  }
+  };
 
   const handleSearch = async () => {
     try {
-      const response = await getAPI(`/filteredDataDistinctMKID?data_providers=${selectedProvider}&world_region=${selectedRegion}&world_sub_region=${selectedSubRegion}&company=${company}&city=${city}`);
-      setSearchData(response);
-      setSelectedProvider('');
+      // const response = await getAPI(
+      //   `/filteredDataDistinctMKID?data_providers=${selectedProvider}&world_region=${selectedRegion}&world_sub_region=${selectedSubRegion}&company=${company}&city=${city}`
+      // );
+      // setSearchData(response);
+      setSelectedProvider("");
       setSelectedSubRegion("");
-      setSelectedRegion('');
+      setSelectedRegion("");
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
-  }
+  };
 
   const handleSaveChanges = async () => {
     try {
+      const { MATCH_MKID, PRIMARY_MKID, isMatched } = JSON.parse(
+        localStorage.getItem("recently")
+      );
+      console.log(MATCH_MKID, PRIMARY_MKID, isMatched, "-------2222");
 
-      const { MATCH_MKID, PRIMARY_MKID, isMatched } = JSON.parse(localStorage.getItem('recently'));
-      console.log(MATCH_MKID, PRIMARY_MKID, isMatched, '-------2222');
+      // if (isMatched) {
+      //   const response = await postAPI(
+      //     `/matchRecord`,
+      //     PRIMARY_MKID,
+      //     MATCH_MKID
+      //   );
+      // } else {
+      //   const response = await postAPI(
+      //     `/notMatchRecord`,
+      //     PRIMARY_MKID,
+      //     MATCH_MKID
+      //   );
+      // }
 
-
-      if (isMatched) {
-        const response = await getAPI(`/matchRecord`,PRIMARY_MKID,MATCH_MKID);
-      } else {
-        const response = await getAPI(`/notMatchRecord`,PRIMARY_MKID,MATCH_MKID);
-      }
-      const response = await getAPI(`/unlockRecord`,PRIMARY_MKID,MATCH_MKID);
+      // const response = await getAPI(`/unlockRecord`, PRIMARY_MKID, MATCH_MKID);
     } catch (error) {
       console.error("Error fetching world regions:", error);
     }
-  }
-
+  };
 
   // Filter regions based on search term
   const filteredRegions = searchTerm
-    ? subRegions.filter(region =>
-      region.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    ? subRegions.filter((region) =>
+        region.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : subRegions.slice(0, 8);
 
   // Handle region selection
@@ -1284,7 +1300,6 @@ const Search = ({ setSearchData, totalRecords }) => {
       }, 500); // Simulate a 500ms loading time
     }
   };
-
 
   return (
     <>
@@ -1305,7 +1320,10 @@ const Search = ({ setSearchData, totalRecords }) => {
             <DropdownMenuContent className="w-56">
               <DropdownMenuGroup>
                 {worldProvider.map((provider, i) => (
-                  <DropdownMenuItem key={i} onClick={() => setSelectedProvider(provider)}>
+                  <DropdownMenuItem
+                    key={i}
+                    onClick={() => setSelectedProvider(provider)}
+                  >
                     {provider}
                   </DropdownMenuItem>
                 ))}
@@ -1326,11 +1344,18 @@ const Search = ({ setSearchData, totalRecords }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuGroup>
-                {worldRegions.length > 0 ? worldRegions.map((region, index) => (
-                  <DropdownMenuItem key={index} onClick={() => handleRegionChange(region)}>
-                    {region}
-                  </DropdownMenuItem>
-                )) : <p>Data not found</p>}
+                {worldRegions.length > 0 ? (
+                  worldRegions.map((region, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      onClick={() => handleRegionChange(region)}
+                    >
+                      {region}
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <p>Data not found</p>
+                )}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -1379,7 +1404,9 @@ const Search = ({ setSearchData, totalRecords }) => {
                       </DropdownMenuItem>
                     ))
                   ) : (
-                    <p className="p-2 text-sm text-gray-500">No regions found</p>
+                    <p className="p-2 text-sm text-gray-500">
+                      No regions found
+                    </p>
                   )}
                 </DropdownMenuGroup>
               </DropdownMenuContent>
@@ -1391,7 +1418,7 @@ const Search = ({ setSearchData, totalRecords }) => {
             <FaCity className="absolute text-[#0A78CD] mt-3 ml-3 text-lg" />
             <input
               value={company}
-              onChange={(e) => handleChange(e, 'Company')}
+              onChange={(e) => handleChange(e, "Company")}
               className="bg-[#F9FAFB] p-3 pl-9 w-44 text-xs rounded-full placeholder:text-xs placeholder:text-[#66668F] focus:outline-none focus:ring-1 focus:ring-[#F2F4F5]"
               placeholder="Enter Company"
             />
@@ -1402,21 +1429,26 @@ const Search = ({ setSearchData, totalRecords }) => {
             <MdLocationCity className="absolute text-[#0A78CD] mt-3 ml-3 text-lg" />
             <input
               value={city}
-              onChange={(e) => handleChange(e, 'City')}
+              onChange={(e) => handleChange(e, "City")}
               className="bg-[#F9FAFB] p-3 pl-9 w-44 text-xs rounded-full placeholder:text-xs placeholder:text-[#66668F] focus:outline-none focus:ring-1 focus:ring-[#F2F4F5]"
               placeholder="Enter City"
             />
           </div>
 
           {/* Action Buttons */}
-          <button onClick={() => handleSearch()} className="bg-[#0A78CD] box-shadow py-3 px-5 text-white text-xs font-semibold rounded-full">
+          <button
+            onClick={() => handleSearch()}
+            className="bg-[#0A78CD] box-shadow py-3 px-5 text-white text-xs font-semibold rounded-full"
+          >
             Search
           </button>
-          <button onClick={() => handleSaveChanges()} className="text-[#0A78CD] border border-[#0A78CD] text-nowrap text-xs py-3 px-5 font-semibold rounded-full">
+          <button
+            onClick={() => handleSaveChanges()}
+            className="text-[#0A78CD] border border-[#0A78CD] text-nowrap text-xs py-3 px-5 font-semibold rounded-full"
+          >
             Save Changes
           </button>
         </div>
-
       </div>
       <div className="px-5 flex items-center gap-2">
         <p className="text-xs">Total Records : </p>

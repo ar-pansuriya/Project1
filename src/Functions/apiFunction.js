@@ -51,9 +51,19 @@ export const getAPI = async (path, p_mkid = null, m_mkid = null) => {
 };
 
 // POST function
-export const postAPI = async (path, data = {}) => {
+export const postAPI = async (path,p_mkid = null, m_mkid = null, data = {}) => {
   try {
-    const response = await axiosInstance.post(path, data);
+    const config = { headers: {} };
+
+    if (p_mkid) {
+      console.log(p_mkid, 'Primary MKID');
+      config.headers.primary_mkid = p_mkid;
+    }
+    if (m_mkid) {
+      console.log(m_mkid, 'Match MKID');
+      config.headers.match_mkid = m_mkid;
+    }
+    const response = await axiosInstance.post(path, data, config);
     return response.data;
   } catch (error) {
     handleAPIError(error);
